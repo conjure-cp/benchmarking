@@ -1,0 +1,26 @@
+[
+    {
+        "totalTime": 110.4,
+        "conjure": 22.1,
+        "savilleRow": 4.2,
+        "solver": 66.2,
+        "metadata": {
+            "oxide": false,
+            "solver": "minion",
+            "pr": "736",
+            "args": ["solve"]
+        }
+    },
+    {
+        "totalTime": 92.4,
+        "conjure": 26.1,
+        "savilleRow": 4.2,
+        "solver": 41.2,
+        "metadata": {
+            "oxide": true,
+            "solver": "SAT",
+            "pr": "736",
+            "args": ["solve"]
+        }
+    }
+]
