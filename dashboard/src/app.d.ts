@@ -18,6 +18,8 @@ declare global {
 
     type FilterValues = {
         pr: string;
+        solvers: string[];
+        args: string[];
     }
 
     namespace App {

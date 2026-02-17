@@ -7,7 +7,7 @@
         "metadata": {
             "oxide": false,
             "solver": "minion",
-            "pr": "736",
+            "pr": "736 (conjure)",
             "args": ["solve"],
             "name": "Problem 1",
             "tags": []
@@ -21,7 +21,7 @@
         "metadata": {
             "oxide": true,
             "solver": "SAT",
-            "pr": "736",
+            "pr": "1336 (oxide)",
             "args": ["solve"],
             "name": "Problem 2",
             "tags": []
@@ -35,7 +35,7 @@
         "metadata": {
             "oxide": false,
             "solver": "minion",
-            "pr": "735",
+            "pr": "735 (conjure)",
             "args": ["solve"],
             "name": "Problem 1",
             "tags": []
@@ -49,7 +49,7 @@
         "metadata": {
             "oxide": true,
             "solver": "SAT",
-            "pr": "735",
+            "pr": "1335 (oxide)",
             "args": ["solve"],
             "name": "Problem 2",
             "tags": []
@@ -63,7 +63,7 @@
         "metadata": {
             "oxide": true,
             "solver": "SAT",
-            "pr": "735",
+            "pr": "1335 (oxide)",
             "args": ["solve"],
             "name": "Problem 2",
             "tags": []
