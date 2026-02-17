@@ -19,5 +19,7 @@
 <div class="w-full h-full">
     <Filter {data} {setFiltered}></Filter>
 
-    <Bar bars={filteredData}></Bar>
+    {#if filteredData.length > 0}
+        <Bar bars={filteredData}></Bar>
+    {/if}
 </div>

@@ -15,6 +15,11 @@ declare global {
             tags: string[]
         }
     };
+
+    type FilterValues = {
+        pr: string;
+    }
+
     namespace App {
         // interface Error { }
         // interface Locals {}

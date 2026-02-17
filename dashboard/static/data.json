@@ -10,7 +10,7 @@
             "pr": "736",
             "args": ["solve"],
             "name": "Problem 1",
-            "tags": ["1"]
+            "tags": []
         }
     },
     {
@@ -24,7 +24,7 @@
             "pr": "736",
             "args": ["solve"],
             "name": "Problem 2",
-            "tags": ["2"]
+            "tags": []
         }
     },
     {
@@ -38,7 +38,7 @@
             "pr": "735",
             "args": ["solve"],
             "name": "Problem 1",
-            "tags": ["1"]
+            "tags": []
         }
     },
     {
@@ -52,7 +52,21 @@
             "pr": "735",
             "args": ["solve"],
             "name": "Problem 2",
-            "tags": ["2"]
+            "tags": []
+        }
+    },
+    {
+        "totalTime": 312.1,
+        "conjure": 26.1,
+        "savilleRow": 4.2,
+        "solver": 41.2,
+        "metadata": {
+            "oxide": true,
+            "solver": "SAT",
+            "pr": "735",
+            "args": ["solve"],
+            "name": "Problem 2",
+            "tags": []
         }
     }
 ]

@@ -1,4 +1,5 @@
 <script lang="ts">
+    import ThemeSelect from "$lib/components/themeSelect.svelte";
     import "./layout.css";
 
     const { children } = $props();
@@ -9,6 +10,7 @@
         <div>
             <h1 class="text-2xl">Conjure Benchmarks</h1>
         </div>
+        <ThemeSelect />
         <div class="flex gap-4">
             <a href="/">Benchmarks</a>
             <a href="/failed">Failures</a>
