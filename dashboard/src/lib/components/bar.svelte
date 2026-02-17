@@ -1,21 +1,29 @@
 <script lang="ts">
-    import Axis from "./axis.svelte";
+    import BarSection from "./barSection.svelte";
     import Tooltip from "./tooltip.svelte";
 
     const { bars }: { bars: Result[] } = $props();
+
     const width = $derived(Math.min(100 / bars.length - 2, 15));
-    const maxHeight =
-        bars.reduce(
-            (a, b) => (b.totalTime > a ? b.totalTime : a),
-            bars[0].totalTime,
-        ) * 1.1;
+    let maxHeight = $derived(
+        bars.reduce((a, b) => (b.totalTime > a ? b.totalTime : a), 0) * 1.1,
+    );
 </script>
 
-<Axis yLabel="Time (seconds)">
-    <div class="w-full h-full flex justify-evenly p-4 items-end">
+<div class="w-full h-full relative">
+    <div
+        class="w-[calc(100%-8rem)] h-0.5 absolute bottom-16 bg-base-content left-16 z-10"
+    ></div>
+    <div
+        class="h-[calc(100%-8rem)] w-0.5 absolute bottom-16 bg-base-content left-16 z-10"
+    ></div>
+    <div class="w-full h-full flex justify-evenly p-16 items-end">
         {#each bars as bar}
             <div
-                class="bg-accent relative"
+                class={"relative " +
+                    (bar.metadata.tags.includes("1")
+                        ? "bg-primary"
+                        : "bg-accent")}
                 style={`width: ${width}%; height:${(100 * bar.totalTime) / maxHeight}%`}
             >
                 <Tooltip>
@@ -24,42 +32,33 @@
                         {bar.totalTime}s
                     </p>
                 </Tooltip>
-                <div
-                    class="bg-[rgba(0,0,0,0.6)] w-full absolute bottom-0 hover:bg-[rgba(50,50,50,0.6)] transition-all"
-                    style={`height: ${(100 * bar.solver) / bar.totalTime}%`}
+                <BarSection
+                    sectionTime={bar.solver}
+                    totalTime={bar.totalTime}
+                    previousTime={0}
+                    opacity={0.6}
+                    name={"Solver"}
+                ></BarSection>
+                <BarSection
+                    sectionTime={bar.savilleRow}
+                    totalTime={bar.totalTime}
+                    previousTime={bar.solver}
+                    opacity={0.4}
+                    name={"Saville Row"}
+                ></BarSection>
+                <BarSection
+                    sectionTime={bar.conjure}
+                    totalTime={bar.totalTime}
+                    previousTime={bar.solver + bar.savilleRow}
+                    opacity={0.2}
+                    name={"Conjure"}
+                ></BarSection>
+                <p
+                    class="absolute -bottom-8 w-full text-center cursor-pointer hover:text-accent transition-all"
                 >
-                    <Tooltip>
-                        <p class="whitespace-nowrap">
-                            <strong>Solver time: </strong>
-                            {bar.solver}s
-                        </p>
-                    </Tooltip>
-                </div>
-                <div
-                    class="bg-[rgba(0,0,0,0.4)] w-full absolute hover:bg-[rgba(50,50,50,0.4)] transition-all"
-                    style={`height: ${(100 * bar.savilleRow) / bar.totalTime}%;
-                        bottom: ${(100 * bar.solver) / bar.totalTime}%`}
-                >
-                    <Tooltip>
-                        <p class="whitespace-nowrap">
-                            <strong>Saville row time: </strong>
-                            {bar.savilleRow}s
-                        </p>
-                    </Tooltip>
-                </div>
-                <div
-                    class="bg-[rgba(0,0,0,0.2)] w-full absolute hover:bg-[rgba(50,50,50,0.2)] transition-all"
-                    style={`height: ${(100 * bar.conjure) / bar.totalTime}%;
-                        bottom: ${(100 * (bar.solver + bar.savilleRow)) / bar.totalTime}%`}
-                >
-                    <Tooltip>
-                        <p class="whitespace-nowrap">
-                            <strong>Conjure time: </strong>
-                            {bar.conjure}s
-                        </p>
-                    </Tooltip>
-                </div>
+                    {bar.metadata.name}
+                </p>
             </div>
         {/each}
     </div>
-</Axis>
+</div>

@@ -10,7 +10,9 @@ declare global {
             oxide: boolean,
             solver: string,
             pr: string,
-            args: string[]
+            args: string[],
+            name: string,
+            tags: string[]
         }
     };
     namespace App {

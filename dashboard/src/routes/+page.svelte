@@ -1,14 +1,23 @@
 <script lang="ts">
     import Bar from "$lib/components/bar.svelte";
+    import Filter from "$lib/components/filter.svelte";
     import { onMount } from "svelte";
-    let data: Result[];
+    let data: Result[] = $state([]);
+    let filteredData: Result[] = $state([]);
+    let testState = $state(1);
 
     onMount(async () => {
         const res: Result[] = await (await fetch("/data.json")).json();
         data = res;
     });
+
+    const setFiltered = (newData: Result[]) => {
+        filteredData = newData;
+    };
 </script>
 
-{#if data != null}
-    <Bar bars={data}></Bar>
-{/if}
+<div class="w-full h-full">
+    <Filter {data} {setFiltered}></Filter>
+
+    <Bar bars={filteredData}></Bar>
+</div>

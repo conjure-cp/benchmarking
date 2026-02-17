@@ -50,6 +50,8 @@
 		"svelte"
 	],
 	"dependencies": {
-		"daisyui": "^5.5.17"
+		"@fortawesome/free-solid-svg-icons": "^7.2.0",
+		"daisyui": "^5.5.17",
+		"svelte-fa": "^4.0.4"
 	}
 }

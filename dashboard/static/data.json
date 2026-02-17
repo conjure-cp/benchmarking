@@ -8,7 +8,9 @@
             "oxide": false,
             "solver": "minion",
             "pr": "736",
-            "args": ["solve"]
+            "args": ["solve"],
+            "name": "Problem 1",
+            "tags": ["1"]
         }
     },
     {
@@ -20,7 +22,37 @@
             "oxide": true,
             "solver": "SAT",
             "pr": "736",
-            "args": ["solve"]
+            "args": ["solve"],
+            "name": "Problem 2",
+            "tags": ["2"]
+        }
+    },
+    {
+        "totalTime": 110.4,
+        "conjure": 22.1,
+        "savilleRow": 4.2,
+        "solver": 66.2,
+        "metadata": {
+            "oxide": false,
+            "solver": "minion",
+            "pr": "735",
+            "args": ["solve"],
+            "name": "Problem 1",
+            "tags": ["1"]
+        }
+    },
+    {
+        "totalTime": 92.4,
+        "conjure": 26.1,
+        "savilleRow": 4.2,
+        "solver": 41.2,
+        "metadata": {
+            "oxide": true,
+            "solver": "SAT",
+            "pr": "735",
+            "args": ["solve"],
+            "name": "Problem 2",
+            "tags": ["2"]
         }
     }
 ]
