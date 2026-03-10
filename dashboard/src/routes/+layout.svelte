@@ -12,8 +12,8 @@
         </div>
         <ThemeSelect />
         <div class="flex gap-4">
-            <a href="/">Benchmarks</a>
-            <a href="/failed">Failures</a>
+            <a href="/" class="hover:text-accent">Benchmarks</a>
+            <a href="/failed" class="hover:text-accent">Failures</a>
         </div>
     </nav>
     <main class="h-[90vh]">
