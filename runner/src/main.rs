@@ -5,6 +5,9 @@ use std::fs;
 use std::fs::File;
 use std::io::Write;
 use std::path::Path;
+use std::process::Command;
+use std::time::Duration;
+use std::time::SystemTime;
 
 #[derive(Serialize, Deserialize, Debug)]
 struct Config {
@@ -19,9 +22,15 @@ struct Configs {
     options: Vec<Config>,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
-struct Problem {
+#[derive(Serialize, Deserialize, Debug, Clone)]
+struct Meta {
     name: String,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+struct Problem {
+    meta: Meta,
+    path: String,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -45,7 +54,7 @@ struct Section {
 
 fn main() {
     let args: Vec<String> = env::args().collect();
-    let default_output_file: String = String::from("out.json");
+    let default_output_file = String::from("out.json");
 
     if args.len() < 3 {
         println!("Expected useage: runner CONFIG.FILE PROBLEM.DIR [OUTPUT.FILE]");
@@ -54,7 +63,7 @@ fn main() {
 
     let config = args.get(1).unwrap();
     let problems = args.get(2).unwrap();
-    let output = args.get(3).unwrap_or_else(|| &default_output_file);
+    let output = args.get(3).unwrap_or(&default_output_file);
 
     if !validate_args(config, problems) {
         return;
@@ -74,12 +83,12 @@ fn main() {
 }
 
 fn validate_args(config: &str, problems: &str) -> bool {
-    if !Path::new(&config.to_owned()[..]).is_file() {
+    if !Path::new(config).is_file() {
         println!("Cannot find provided config file");
         return false;
     }
 
-    if !Path::new(&problems.to_owned()[..]).is_dir() {
+    if !Path::new(problems).is_dir() {
         println!("Cannot find the provided problem file directory");
         return false;
     }
@@ -88,17 +97,10 @@ fn validate_args(config: &str, problems: &str) -> bool {
 }
 
 fn read_config(config: &str) -> Option<Configs> {
-    let content = fs::read_to_string(config).unwrap_or_else(|_| "".to_string());
+    let content = fs::read_to_string(config).unwrap_or(String::new());
 
-    let json: Result<Configs, Error> = serde_json::from_str(&content[..]);
-    match json {
-        Ok(c) => {
-            return Some(c);
-        }
-        Err(_) => {
-            return None;
-        }
-    }
+    let json: Result<Configs, Error> = serde_json::from_str(&content);
+    json.ok()
 }
 
 fn find_problems(dir: &str) -> Vec<Problem> {
@@ -107,15 +109,18 @@ fn find_problems(dir: &str) -> Vec<Problem> {
     for entry in fs::read_dir(dir).unwrap() {
         if let Ok(e) = entry {
             let os_name = e.file_name();
-            let name = os_name.to_str().unwrap_or_else(|| "");
-            if name.len() > 8 && &name[name.len() - 8..] == ".essence" {
+            let name = os_name.to_str().unwrap_or("");
+            if name.ends_with(".essence") {
                 let p = e.path();
                 let path = p.to_str().unwrap();
                 let meta_path = path[..path.len() - 8].to_owned() + ".meta.json";
-                if Path::new(&meta_path.to_owned()[..]).is_file() {
-                    let meta = fs::read_to_string(meta_path).unwrap_or_else(|_| "".to_string());
-                    if let Ok(problem) = serde_json::from_str(&meta[..]) {
-                        out.push(problem);
+                if Path::new(&meta_path).is_file() {
+                    let meta = fs::read_to_string(meta_path).unwrap_or(String::new());
+                    if let Ok(meta) = serde_json::from_str(&meta) {
+                        out.push(Problem {
+                            meta: meta,
+                            path: path.to_string(),
+                        });
                     }
                 }
             }
@@ -123,7 +128,7 @@ fn find_problems(dir: &str) -> Vec<Problem> {
             if let Ok(ft) = e.file_type()
                 && ft.is_dir()
             {
-                out.append(&mut find_problems(&e.path().to_str().unwrap().to_string()))
+                out.append(&mut find_problems(e.path().to_str().unwrap()))
             }
         }
     }
@@ -140,14 +145,39 @@ fn run_benchmarks(problems: Vec<Problem>, configs: Configs) -> Vec<Results> {
 }
 
 fn run_all(problems: &Vec<Problem>, config: Config) -> Results {
-    let mut commands: Vec<String> = Vec::new();
-    for args in &config.args[..] {
-        commands.push(config.conjure_path.clone() + " " + &args.join(" "));
+    let mut out: Vec<BenchmarkResult> = Vec::new();
+
+    for args in &config.args {
+        let command = format!("{} {}", config.conjure_path, args.join(" "));
+        for p in problems {
+            let mut cmd = Command::new("bash");
+            let start = SystemTime::now();
+            let output = cmd
+                .arg("-c")
+                .arg(format!("{} {}", command, p.path))
+                .output();
+            match output {
+                Ok(o) => {
+                    if o.stderr.len() != 0 {
+                        continue;
+                    }
+                }
+                Err(_) => continue,
+            }
+
+            if let Ok(dur) = start.elapsed() {
+                out.push(BenchmarkResult {
+                    problem: p.to_owned(),
+                    total_time: dur.as_secs_f64(),
+                    times: Vec::new(),
+                });
+            }
+        }
     }
 
     Results {
         config,
-        results: Vec::new(),
+        results: out,
     }
 }
 
@@ -158,7 +188,7 @@ fn build_output(results: Vec<Results>, location: &str) {
     if let Ok(mut file) = out_file {
         let res = file.write_all(json.as_bytes());
         if let Err(e) = res {
-            println!("{}", e)
+            println!("{e}")
         }
     } else {
         println!("Could not write to output file")

@@ -1,0 +1,10 @@
+{
+    "options": [
+        {
+            "conjure_path": "conjure",
+            "args": [["solve"]],
+            "problem_names": [],
+            "negate": true
+        }
+    ]
+}
