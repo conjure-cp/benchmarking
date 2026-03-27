@@ -1,0 +1,29 @@
+[
+    {
+        "config": {
+            "conjure_path": "conjure",
+            "args": [["solve"]],
+            "problem_names": [],
+            "negate": true
+        },
+        "results": [
+            {
+                "problem": {
+                    "meta": { "name": "p1" },
+                    "path": "../exampleProblems/problem.essence"
+                },
+                "total_time": 0.402654172,
+                "times": []
+            },
+            {
+                "problem": {
+                    "meta": { "name": "p2" },
+                    "path": "../exampleProblems/other/p2.essence"
+                },
+                "total_time": 0.404524308,
+                "times": []
+            }
+        ]
+    }
+]
+

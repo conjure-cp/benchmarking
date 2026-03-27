@@ -1,15 +1,22 @@
+use core::time;
 use serde::{Deserialize, Serialize};
 use serde_json::Error;
+use std::cmp::max;
 use std::env;
 use std::fs;
 use std::fs::File;
 use std::io::Write;
 use std::path::Path;
 use std::process::Command;
-use std::time::Duration;
+use std::sync::Arc;
+use std::sync::Mutex;
+use std::sync::mpsc;
+use std::thread;
+use std::thread::JoinHandle;
 use std::time::SystemTime;
+use threadpool::ThreadPool;
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 struct Config {
     conjure_path: String,
     args: Vec<Vec<String>>,
@@ -33,20 +40,20 @@ struct Problem {
     path: String,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 struct Results {
     config: Config,
     results: Vec<BenchmarkResult>,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 struct BenchmarkResult {
     problem: Problem,
     total_time: f64,
     times: Vec<Section>,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 struct Section {
     name: String,
     time: f64,
@@ -77,9 +84,11 @@ fn main() {
             return;
         }
     };
+
+    let pool = ThreadPool::new(max(1, num_cpus::get() - 1));
+
     let problems = find_problems(problems);
-    let results = run_benchmarks(problems, configs);
-    build_output(results, output);
+    run_benchmarks(problems, configs, output, pool);
 }
 
 fn validate_args(config: &str, problems: &str) -> bool {
@@ -136,49 +145,97 @@ fn find_problems(dir: &str) -> Vec<Problem> {
     out
 }
 
-fn run_benchmarks(problems: Vec<Problem>, configs: Configs) -> Vec<Results> {
-    let mut out: Vec<Results> = Vec::new();
+fn run_benchmarks(problems: Vec<Problem>, configs: Configs, output_file: &str, pool: ThreadPool) {
+    let out: Arc<Mutex<Vec<Results>>> = Arc::new(Mutex::new(Vec::new()));
+
+    let write_cp = Arc::clone(&out);
+    let output_file = output_file.to_owned();
+    let (tx, rx) = mpsc::channel::<bool>();
+    let handle = thread::spawn(move || {
+        loop {
+            let mut should_end = false;
+            if let Ok(_) = rx.try_recv() {
+                should_end = true;
+            }
+
+            build_output(write_cp.lock().unwrap().clone(), &output_file);
+            if should_end {
+                break;
+            } else {
+                thread::sleep(time::Duration::from_secs(3));
+            }
+        }
+    });
+
     for c in configs.options {
-        out.push(run_all(&problems, c));
+        let out = Arc::clone(&out);
+        run_all(&problems, c, out, &pool);
     }
-    out
+
+    pool.join();
+    let _ = tx.send(true);
+    let _ = handle.join();
 }
 
-fn run_all(problems: &Vec<Problem>, config: Config) -> Results {
-    let mut out: Vec<BenchmarkResult> = Vec::new();
+fn run_all(
+    problems: &Vec<Problem>,
+    config: Config,
+    out: Arc<Mutex<Vec<Results>>>,
+    pool: &ThreadPool,
+) {
+    let idx;
+    {
+        let mut out = out.lock().unwrap();
+        out.push(Results {
+            config: config.clone(),
+            results: Vec::new(),
+        });
+        idx = out.len() - 1;
+    }
 
     for args in &config.args {
         let command = format!("{} {}", config.conjure_path, args.join(" "));
-        for p in problems {
-            let mut cmd = Command::new("bash");
-            let start = SystemTime::now();
-            let output = cmd
-                .arg("-c")
-                .arg(format!("{} {}", command, p.path))
-                .output();
-            match output {
-                Ok(o) => {
-                    if o.stderr.len() != 0 {
-                        continue;
-                    }
-                }
-                Err(_) => continue,
-            }
 
-            if let Ok(dur) = start.elapsed() {
-                out.push(BenchmarkResult {
-                    problem: p.to_owned(),
-                    total_time: dur.as_secs_f64(),
-                    times: Vec::new(),
-                });
-            }
+        for p in problems {
+            let p = p.clone();
+            let command = command.clone();
+            let out = Arc::clone(&out);
+            pool.execute(move || {
+                if let Some(res) = run_one_problem(p, command) {
+                    let mut out = out.lock().unwrap();
+                    let r: &mut Results = out.get_mut(idx).unwrap();
+                    r.results.push(res);
+                }
+            });
         }
     }
+}
 
-    Results {
-        config,
-        results: out,
-    }
+fn run_one_problem(problem: Problem, command: String) -> Option<BenchmarkResult> {
+    let mut cmd = Command::new("bash");
+    let start = SystemTime::now();
+    let output = cmd
+        .arg("-c")
+        .arg(format!("{} {}", command, problem.path))
+        .output();
+    return match output {
+        Ok(o) => {
+            if o.stderr.len() != 0 {
+                None
+            } else {
+                if let Ok(dur) = start.elapsed() {
+                    Some(BenchmarkResult {
+                        problem: problem,
+                        times: vec![],
+                        total_time: dur.as_secs_f64(),
+                    })
+                } else {
+                    None
+                }
+            }
+        }
+        Err(_) => None,
+    };
 }
 
 fn build_output(results: Vec<Results>, location: &str) {
