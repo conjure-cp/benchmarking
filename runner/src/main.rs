@@ -4,7 +4,6 @@ use regex::Regex;
 use serde::{Deserialize, Serialize};
 use serde_json::Error;
 use std::cmp::max;
-use std::cmp::min;
 use std::env;
 use std::fs;
 use std::fs::File;
@@ -59,6 +58,7 @@ struct BenchmarkResult {
     total_time: f64,
     times: Vec<Section>,
     param_runs: Vec<ParamRun>,
+    found_sols: bool,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -66,6 +66,7 @@ struct ParamRun {
     name: String,
     total_time: f64,
     times: Vec<Section>,
+    found_sols: bool,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -142,7 +143,7 @@ fn main() {
         }
     };
 
-    let pool = ThreadPool::new(min(2, num_cpus::get() - 8));
+    let pool = ThreadPool::new(max(2, num_cpus::get() / 2));
 
     let problems = find_problems(problems);
     run_benchmarks(problems, configs, output, pool);
@@ -276,6 +277,7 @@ fn run_all(
                         total_time: -1.0,
                         times: Vec::new(),
                         param_runs: Vec::new(),
+                        found_sols: true,
                     });
                     p_idx = r.results.len() - 1;
                 }
@@ -295,6 +297,7 @@ fn run_all(
                                     name: e.file_name().to_str().unwrap().to_string(),
                                     total_time: res.total_time,
                                     times: res.times,
+                                    found_sols: res.found_sols,
                                 });
                             }
                         });
@@ -341,12 +344,12 @@ fn run_one_problem(
         extra_opts = "--log --logfile conjure-oxide.log"
     }
 
-    let start = Instant::now();
-
     let mut param_path = String::new();
     if param != "" {
         param_path = "../".to_string() + &param;
     }
+
+    let start = Instant::now();
 
     let output = cmd
         .arg("-c")
@@ -357,6 +360,10 @@ fn run_one_problem(
         .output();
     let elapsed = start.elapsed();
     let mut times: Vec<Section> = Vec::new();
+
+    println!("{:?}", output);
+
+    let mut solved = false;
 
     if oxide {
         let log_file =
@@ -384,6 +391,7 @@ fn run_one_problem(
                 }
 
                 if line.contains("Solutions") {
+                    solved = true;
                     times.push(Section {
                         name: "Solver".to_string(),
                         time: time_stamp
@@ -406,6 +414,17 @@ fn run_one_problem(
             {
                 let stats = fs::read_to_string(entry.unwrap().path()).unwrap();
                 let stats: Result<ConjureStats, Error> = serde_json::from_str(&stats);
+                if stats
+                    .as_ref()
+                    .unwrap()
+                    .savilerowInfo
+                    .SolverSolutionsFound
+                    .parse::<i64>()
+                    .unwrap()
+                    > 0
+                {
+                    solved = true;
+                }
                 times.push(Section {
                     name: "Savile Row".to_string(),
                     time: stats
@@ -438,6 +457,7 @@ fn run_one_problem(
             times: times,
             total_time: elapsed.as_secs_f64(),
             param_runs: Vec::new(),
+            found_sols: solved,
         }),
         Err(_) => None,
     };

@@ -1,11 +1,18 @@
 {
     "options": [
         {
-            "conjure_path": "conjure",
+            "conjure_path": "conjure-oxide",
             "args": [["solve"]],
             "problem_names": [],
             "negate": true,
-            "oxide": false
+            "oxide": true
+        },
+        {
+            "conjure_path": "conjure-oxide",
+            "args": [["solve", "--parser", "tree-sitter"]],
+            "problem_names": [],
+            "negate": true,
+            "oxide": true
         }
     ]
 }
