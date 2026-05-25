@@ -9,6 +9,8 @@
     $effect(() => {
         if (open) {
             modal.showModal();
+        } else {
+            modal.close();
         }
     });
 </script>

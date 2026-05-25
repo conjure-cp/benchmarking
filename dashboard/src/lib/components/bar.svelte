@@ -4,15 +4,28 @@
     import ResultInfo from "./resultInfo.svelte";
     import Tooltip from "./tooltip.svelte";
 
-    const { bars }: { bars: Result[] } = $props();
+    const { bars }: { bars: { label: string; result: Result }[] } = $props();
 
     let popupOpen = $state(false);
     const closePopup = () => {
         popupOpen = false;
     };
     const width = $derived(Math.min(100 / bars.length - 2, 15));
+
+    const maxTime = (r: Result) => {
+        return r.total_time > 0
+            ? r.total_time
+            : r.param_runs.reduce(
+                  (a, b) => (b.total_time > a ? b.total_time : a),
+                  0,
+              );
+    };
+
     let maxHeight = $derived(
-        bars.reduce((a, b) => (b.totalTime > a ? b.totalTime : a), 0) * 1.1,
+        bars.reduce(
+            (a, b) => (maxTime(b.result) > a ? maxTime(b.result) : a),
+            0,
+        ) * 1.1,
     );
 
     let currentBar: Result | null = $state(null);
@@ -77,46 +90,44 @@
         {#each bars as bar}
             <div
                 class={"relative " +
-                    (bar.metadata.tags.includes("1")
-                        ? "bg-primary"
-                        : "bg-accent")}
-                style={`width: ${width}%; height:${(100 * bar.totalTime) / maxHeight}%`}
+                    (bar.label == "1" ? "bg-primary" : "bg-accent")}
+                style={`width: ${width}%; height:${(100 * maxTime(bar.result)) / maxHeight}%`}
             >
                 <Tooltip>
                     <p class="whitespace-nowrap">
                         <strong>Total time:</strong>
-                        {bar.totalTime}s
+                        {maxTime(bar.result)}s
                     </p>
                 </Tooltip>
-                <BarSection
-                    sectionTime={bar.solver}
-                    totalTime={bar.totalTime}
-                    previousTime={0}
-                    opacity={0.6}
-                    name={"Solver"}
-                ></BarSection>
-                <BarSection
-                    sectionTime={bar.savilleRow}
-                    totalTime={bar.totalTime}
-                    previousTime={bar.solver}
-                    opacity={0.4}
-                    name={"Saville Row"}
-                ></BarSection>
-                <BarSection
-                    sectionTime={bar.conjure}
-                    totalTime={bar.totalTime}
-                    previousTime={bar.solver + bar.savilleRow}
-                    opacity={0.2}
-                    name={"Conjure"}
-                ></BarSection>
+                <!-- <BarSection -->
+                <!--     sectionTime={bar.solver} -->
+                <!--     totalTime={bar.totalTime} -->
+                <!--     previousTime={0} -->
+                <!--     opacity={0.6} -->
+                <!--     name={"Solver"} -->
+                <!-- ></BarSection> -->
+                <!-- <BarSection -->
+                <!--     sectionTime={bar.savilleRow} -->
+                <!--     totalTime={bar.totalTime} -->
+                <!--     previousTime={bar.solver} -->
+                <!--     opacity={0.4} -->
+                <!--     name={"Saville Row"} -->
+                <!-- ></BarSection> -->
+                <!-- <BarSection -->
+                <!--     sectionTime={bar.conjure} -->
+                <!--     totalTime={bar.totalTime} -->
+                <!--     previousTime={bar.solver + bar.savilleRow} -->
+                <!--     opacity={0.2} -->
+                <!--     name={"Conjure"} -->
+                <!-- ></BarSection> -->
                 <button
                     class="absolute -bottom-8 w-full text-center cursor-pointer hover:text-accent transition-all"
                     onclick={() => {
-                        currentBar = bar;
+                        currentBar = bar.result;
                         popupOpen = true;
                     }}
                 >
-                    {bar.metadata.name}
+                    {bar.result.problem.meta.name}
                 </button>
             </div>
         {/each}

@@ -1,0 +1,215 @@
+[
+  {
+    "config": {
+      "conjure_path": "conjure-oxide",
+      "args": [["solve"]],
+      "problem_names": [],
+      "negate": true,
+      "oxide": true
+    },
+    "results": [
+      {
+        "problem": {
+          "meta": { "name": "n_queens", "params": "params" },
+          "path": "../exampleProblems/n_queens/n_queens.essence"
+        },
+        "total_time": -1.0,
+        "times": [],
+        "param_runs": [
+          {
+            "name": "n_queens_16.param",
+            "total_time": 0.084067993,
+            "times": [],
+            "found_sols": false
+          },
+          {
+            "name": "n_queens_32.param",
+            "total_time": 0.085175906,
+            "times": [],
+            "found_sols": false
+          },
+          {
+            "name": "n_queens_8.param",
+            "total_time": 0.10038132,
+            "times": [],
+            "found_sols": false
+          },
+          {
+            "name": "n_queens_24.param",
+            "total_time": 0.116131761,
+            "times": [],
+            "found_sols": false
+          }
+        ],
+        "found_sols": true
+      },
+      {
+        "problem": {
+          "meta": { "name": "bibd-implied", "params": "params" },
+          "path": "../exampleProblems/bibd-implied/bibd.essence"
+        },
+        "total_time": -1.0,
+        "times": [],
+        "param_runs": [],
+        "found_sols": true
+      },
+      {
+        "problem": {
+          "meta": { "name": "bibd", "params": "params" },
+          "path": "../exampleProblems/bibd/bibd.essence"
+        },
+        "total_time": -1.0,
+        "times": [],
+        "param_runs": [],
+        "found_sols": true
+      },
+      {
+        "problem": {
+          "meta": { "name": "magicSquare", "params": "params" },
+          "path": "../exampleProblems/magicSquare/magicSquare.essence"
+        },
+        "total_time": -1.0,
+        "times": [],
+        "param_runs": [],
+        "found_sols": true
+      },
+      {
+        "problem": {
+          "meta": { "name": "knights", "params": "params" },
+          "path": "../exampleProblems/knights/knights.essence"
+        },
+        "total_time": -1.0,
+        "times": [],
+        "param_runs": [],
+        "found_sols": true
+      },
+      {
+        "problem": {
+          "meta": { "name": "antichain", "params": "params" },
+          "path": "../exampleProblems/antichain/antichain.essence"
+        },
+        "total_time": -1.0,
+        "times": [],
+        "param_runs": [],
+        "found_sols": true
+      },
+      {
+        "problem": {
+          "meta": { "name": "discreteTomography", "params": "params" },
+          "path": "../exampleProblems/discreteTomography/discreteTomography.essence"
+        },
+        "total_time": -1.0,
+        "times": [],
+        "param_runs": [],
+        "found_sols": true
+      },
+      {
+        "problem": {
+          "meta": { "name": "farm_puzzle1", "params": "" },
+          "path": "../exampleProblems/farm_puzzle/farm_puzzle1.essence"
+        },
+        "total_time": 0.720026238,
+        "times": [
+          { "name": "Rewriting", "time": 0.602487 },
+          { "name": "Solver", "time": 0.004319 }
+        ],
+        "param_runs": [],
+        "found_sols": true
+      },
+      {
+        "problem": {
+          "meta": { "name": "farm_puzzle2", "params": "" },
+          "path": "../exampleProblems/farm_puzzle/farm_puzzle2.essence"
+        },
+        "total_time": 0.83514033,
+        "times": [
+          { "name": "Rewriting", "time": 0.734049 },
+          { "name": "Solver", "time": 0.002728 }
+        ],
+        "param_runs": [],
+        "found_sols": true
+      }
+    ]
+  },
+  {
+    "config": {
+      "conjure_path": "conjure-oxide",
+      "args": [["solve", "--parser", "tree-sitter"]],
+      "problem_names": [],
+      "negate": true,
+      "oxide": true
+    },
+    "results": [
+      {
+        "problem": {
+          "meta": { "name": "n_queens", "params": "params" },
+          "path": "../exampleProblems/n_queens/n_queens.essence"
+        },
+        "total_time": -1.0,
+        "times": [],
+        "param_runs": [],
+        "found_sols": true
+      },
+      {
+        "problem": {
+          "meta": { "name": "bibd-implied", "params": "params" },
+          "path": "../exampleProblems/bibd-implied/bibd.essence"
+        },
+        "total_time": -1.0,
+        "times": [],
+        "param_runs": [],
+        "found_sols": true
+      },
+      {
+        "problem": {
+          "meta": { "name": "bibd", "params": "params" },
+          "path": "../exampleProblems/bibd/bibd.essence"
+        },
+        "total_time": -1.0,
+        "times": [],
+        "param_runs": [],
+        "found_sols": true
+      },
+      {
+        "problem": {
+          "meta": { "name": "magicSquare", "params": "params" },
+          "path": "../exampleProblems/magicSquare/magicSquare.essence"
+        },
+        "total_time": -1.0,
+        "times": [],
+        "param_runs": [],
+        "found_sols": true
+      },
+      {
+        "problem": {
+          "meta": { "name": "knights", "params": "params" },
+          "path": "../exampleProblems/knights/knights.essence"
+        },
+        "total_time": -1.0,
+        "times": [],
+        "param_runs": [],
+        "found_sols": true
+      },
+      {
+        "problem": {
+          "meta": { "name": "antichain", "params": "params" },
+          "path": "../exampleProblems/antichain/antichain.essence"
+        },
+        "total_time": -1.0,
+        "times": [],
+        "param_runs": [],
+        "found_sols": true
+      },
+      {
+        "problem": {
+          "meta": { "name": "discreteTomography", "params": "params" },
+          "path": "../exampleProblems/discreteTomography/discreteTomography.essence"
+        },
+        "total_time": -1.0,
+        "times": [],
+        "param_runs": [],
+        "found_sols": true
+      }
+    ]
+  }
+]

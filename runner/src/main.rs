@@ -59,6 +59,7 @@ struct BenchmarkResult {
     times: Vec<Section>,
     param_runs: Vec<ParamRun>,
     found_sols: bool,
+    args: Vec<String>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -278,6 +279,7 @@ fn run_all(
                         times: Vec::new(),
                         param_runs: Vec::new(),
                         found_sols: true,
+                        args: args.clone(),
                     });
                     p_idx = r.results.len() - 1;
                 }
@@ -306,11 +308,15 @@ fn run_all(
 
                 // Squash into one result with all the different params
             } else {
+                let c_args = args.clone();
                 pool.execute(move || {
                     if let Some(res) = run_one_problem(&p, command, config.oxide, "".to_string()) {
                         let mut out = out.lock().unwrap();
                         let r: &mut Results = out.get_mut(idx).unwrap();
-                        r.results.push(res);
+                        r.results.push(BenchmarkResult {
+                            args: c_args,
+                            ..res
+                        });
                     }
                 });
             }
@@ -361,7 +367,7 @@ fn run_one_problem(
     let elapsed = start.elapsed();
     let mut times: Vec<Section> = Vec::new();
 
-    println!("{:?}", output);
+    println!("Finished - {}", problem.path);
 
     let mut solved = false;
 
@@ -458,6 +464,7 @@ fn run_one_problem(
             total_time: elapsed.as_secs_f64(),
             param_runs: Vec::new(),
             found_sols: solved,
+            args: Vec::new(),
         }),
         Err(_) => None,
     };

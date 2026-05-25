@@ -2,16 +2,22 @@
     "options": [
         {
             "conjure_path": "conjure-oxide",
-            "args": [["solve"]],
+            "args": [
+                ["solve", "--parser", "tree-siiter"],
+                ["solve", "--parser", "via-conjure"]
+            ],
             "problem_names": [],
             "negate": true,
             "oxide": true
         },
         {
             "conjure_path": "conjure-oxide",
-            "args": [["solve", "--parser", "tree-sitter"]],
-            "problem_names": [],
-            "negate": true,
+            "args": [
+                ["solve", "--solver", "sat-log"],
+                ["solve", "--solver", "sat-direct"]
+            ],
+            "problem_names": ["sat-problem1", "sat-problem2"],
+            "negate": false,
             "oxide": true
         }
     ]
