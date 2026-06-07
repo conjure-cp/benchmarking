@@ -326,8 +326,10 @@
                                     name="Conditional"
                                     class="select"
                                     onchange={(e) => {
+                                        const selectedName =
+                                            e.currentTarget.value;
                                         for (const o of opts) {
-                                            if (o.name == e.target.value) {
+                                            if (o.name == selectedName) {
                                                 newOpt = o;
                                             }
                                         }
