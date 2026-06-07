@@ -69,7 +69,7 @@ jobs:
 
       - name: Deploy to GitHub Pages
         if: github.event_name == 'push'
-        uses: JamesIves/github-pages-deploy-action@v4.4.3
+        uses: JamesIves/github-pages-deploy-action@v4.8.0
         with:
           branch: gh-pages
           folder: ./essence-feature-usage-stats/web/static
