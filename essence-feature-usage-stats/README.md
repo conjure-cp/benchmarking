@@ -20,7 +20,7 @@ This can be configured using the OUTPUT_PATH environment variable, but paths to 
 inside the index.html template will need to be updated. 
 The GitHub action also assumes that path and won't work if it's changed.
 
-It is deployed using GitHub Pages: see https://conjure-cp.github.io/benchmarking/essence-feature-usage-stats/
+It is deployed using GitHub Pages: see https://conjure-cp.github.io/conjure-oxide-reports/main/essence-feature-usage-stats/
 
 
 ## Usage

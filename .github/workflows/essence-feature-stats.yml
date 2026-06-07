@@ -13,6 +13,10 @@ on:
       - essence-feature-usage-stats/**
       - .github/workflows/essence-feature-stats.yml
 
+concurrency:
+  group: conjure-oxide-reports-deploy
+  cancel-in-progress: false
+
 env:
   ESSENCE_DIR: "./EssenceRepos"
   CONJURE_DIR: "./conjure"
@@ -40,7 +44,7 @@ jobs:
         python-version: ["3.11"]
 
     permissions:
-      contents: write
+      contents: read
 
     steps:
       - name: Checkout code
@@ -67,12 +71,49 @@ jobs:
         run: touch ./web/static/.nojekyll
         working-directory: ./essence-feature-usage-stats
 
-      - name: Deploy to GitHub Pages
-        if: github.event_name == 'push'
-        uses: JamesIves/github-pages-deploy-action@v4.8.0
+      - name: Create reports app token
+        if: ${{ github.event_name == 'push' || github.event_name == 'workflow_dispatch' }}
+        id: reports-token
+        uses: actions/create-github-app-token@v3
         with:
-          branch: gh-pages
-          folder: ./essence-feature-usage-stats/web/static
-          target-folder: essence-feature-usage-stats
-          commit-message: "Actions: Deploy the essence features usage table"
-          force: false
+          app-id: ${{ secrets.CONJURE_BOT_ID }}
+          private-key: ${{ secrets.CONJURE_BOT_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: |
+            conjure-oxide-reports
+
+      - name: Checkout reports repository
+        if: ${{ github.event_name == 'push' || github.event_name == 'workflow_dispatch' }}
+        uses: actions/checkout@v6
+        with:
+          repository: conjure-cp/conjure-oxide-reports
+          ref: main
+          token: ${{ steps.reports-token.outputs.token }}
+          path: conjure-oxide-reports
+
+      - name: Prepare reports repository update
+        if: ${{ github.event_name == 'push' || github.event_name == 'workflow_dispatch' }}
+        run: |
+          set -euo pipefail
+
+          target="conjure-oxide-reports/main/essence-feature-usage-stats"
+          rm -rf "$target"
+          mkdir -p "$target"
+          cp -R essence-feature-usage-stats/web/static/. "$target/"
+
+      - name: Commit and push reports repository update
+        if: ${{ github.event_name == 'push' || github.event_name == 'workflow_dispatch' }}
+        working-directory: conjure-oxide-reports
+        run: |
+          set -euo pipefail
+
+          git config user.name "conjure-bot"
+          git config user.email "conjure-bot@users.noreply.github.com"
+          git add main/essence-feature-usage-stats
+
+          if git diff --staged --quiet; then
+            echo "No reports changes to commit."
+          else
+            git commit -m "Actions: Deploy the essence features usage table"
+            git push origin main
+          fi
