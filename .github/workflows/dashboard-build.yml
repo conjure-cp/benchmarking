@@ -1,0 +1,42 @@
+name: dashboard-build
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - dashboard/**
+      - .github/workflows/dashboard-build.yml
+  pull_request:
+    paths:
+      - dashboard/**
+      - .github/workflows/dashboard-build.yml
+  workflow_dispatch:
+
+jobs:
+  build:
+    timeout-minutes: 20
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Install Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: dashboard/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+        working-directory: ./dashboard
+
+      - name: Check dashboard
+        run: npm run check
+        working-directory: ./dashboard
+
+      - name: Build dashboard
+        run: npm run build
+        working-directory: ./dashboard
