@@ -1,0 +1,54 @@
+version: 2
+
+updates:
+  - package-ecosystem: npm
+    directory: /dashboard
+    schedule:
+      interval: weekly
+    assignees:
+      - ozgurakgun
+    groups:
+      npm-dashboard:
+        patterns:
+          - "*"
+    labels:
+      - "dependencies"
+      - "dependencies::javascript"
+
+  - package-ecosystem: cargo
+    directory: /runner
+    schedule:
+      interval: weekly
+    assignees:
+      - ozgurakgun
+    groups:
+      cargo-runner:
+        patterns:
+          - "*"
+    labels:
+      - "dependencies"
+      - "dependencies::rust"
+
+  - package-ecosystem: pip
+    directory: /essence-feature-usage-stats
+    schedule:
+      interval: monthly
+    assignees:
+      - ozgurakgun
+    groups:
+      pip-essence-feature-usage-stats:
+        patterns:
+          - "*"
+    labels:
+      - "dependencies"
+      - "dependencies::python"
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    assignees:
+      - ozgurakgun
+    labels:
+      - "dependencies"
+      - "dependencies::ci"
