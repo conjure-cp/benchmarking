@@ -79,20 +79,20 @@ struct Section {
 #[derive(Serialize, Deserialize, Debug, Clone)]
 struct ConjureStats {
     computer: String,
-    conjureVersion: String,
+    conjure_version: String,
     essence: String,
-    essenceParams: Vec<String>,
-    runsolverInfo: RunsolverInfo,
-    savilerowInfo: SavilerowInfo,
-    savilerowLogs: SavilerowLogs,
-    savilerowOptions: Vec<String>,
-    savilerowVersion: String,
+    essence_params: Vec<String>,
+    runsolver_info: RunsolverInfo,
+    savilerow_info: SavilerowInfo,
+    savilerow_logs: SavilerowLogs,
+    savilerow_options: Vec<String>,
+    savilerow_version: String,
     solver: String,
-    solverOptions: Vec<String>,
+    solver_options: Vec<String>,
     status: String,
     timestamp: String,
-    totalTime: f64,
-    useExistingModels: Vec<String>,
+    total_time: f64,
+    use_existing_models: Vec<String>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -100,21 +100,21 @@ struct RunsolverInfo {}
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 struct SavilerowInfo {
-    SavileRowClauseOut: String,
-    SavileRowTimeOut: String,
-    SavileRowTotalTime: String,
-    SolverNodes: String,
-    SolverSatisfiable: String,
-    SolverSetupTime: String,
-    SolverSolutionsFound: String,
-    SolverSolveTime: String,
-    SolverTimeOut: String,
-    SolverTotalTime: String,
+    savile_row_clause_out: String,
+    savile_row_time_out: String,
+    savile_row_total_time: String,
+    solver_nodes: String,
+    solver_satisfiable: String,
+    solver_setup_time: String,
+    solver_solutions_found: String,
+    solver_solve_time: String,
+    solver_time_out: String,
+    solver_total_time: String,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 struct SavilerowLogs {
-    exitCode: i64,
+    exit_code: i64,
     stdout: Vec<String>,
 }
 
@@ -165,7 +165,7 @@ fn validate_args(config: &str, problems: &str) -> bool {
 }
 
 fn read_config(config: &str) -> Option<Configs> {
-    let content = fs::read_to_string(config).unwrap_or(String::new());
+    let content = fs::read_to_string(config).unwrap_or_default();
 
     let json: Result<Configs, Error> = serde_json::from_str(&content);
     json.ok()
@@ -174,30 +174,28 @@ fn read_config(config: &str) -> Option<Configs> {
 fn find_problems(dir: &str) -> Vec<Problem> {
     let mut out: Vec<Problem> = Vec::new();
 
-    for entry in fs::read_dir(dir).unwrap() {
-        if let Ok(e) = entry {
-            let os_name = e.file_name();
-            let name = os_name.to_str().unwrap_or("");
-            if name.ends_with(".essence") {
-                let p = e.path();
-                let path = p.to_str().unwrap();
-                let meta_path = path[..path.len() - 8].to_owned() + ".meta.json";
-                if Path::new(&meta_path).is_file() {
-                    let meta = fs::read_to_string(meta_path).unwrap_or(String::new());
-                    if let Ok(meta) = serde_json::from_str(&meta) {
-                        out.push(Problem {
-                            meta: meta,
-                            path: path.to_string(),
-                        });
-                    }
+    for entry in fs::read_dir(dir).unwrap().flatten() {
+        let os_name = entry.file_name();
+        let name = os_name.to_str().unwrap_or("");
+        if name.ends_with(".essence") {
+            let p = entry.path();
+            let path = p.to_str().unwrap();
+            let meta_path = path[..path.len() - 8].to_owned() + ".meta.json";
+            if Path::new(&meta_path).is_file() {
+                let meta = fs::read_to_string(meta_path).unwrap_or_default();
+                if let Ok(meta) = serde_json::from_str(&meta) {
+                    out.push(Problem {
+                        meta,
+                        path: path.to_string(),
+                    });
                 }
             }
+        }
 
-            if let Ok(ft) = e.file_type()
-                && ft.is_dir()
-            {
-                out.append(&mut find_problems(e.path().to_str().unwrap()))
-            }
+        if let Ok(ft) = entry.file_type()
+            && ft.is_dir()
+        {
+            out.append(&mut find_problems(entry.path().to_str().unwrap()))
         }
     }
 
@@ -213,7 +211,7 @@ fn run_benchmarks(problems: Vec<Problem>, configs: Configs, output_file: &str, p
     let handle = thread::spawn(move || {
         loop {
             let mut should_end = false;
-            if let Ok(_) = rx.try_recv() {
+            if rx.try_recv().is_ok() {
                 should_end = true;
             }
 
@@ -252,6 +250,8 @@ fn run_all(
         idx = out.len() - 1;
     }
 
+    let re = Regex::new("[^/]*$").unwrap();
+
     for args in &config.args {
         let command = format!("{} {}", config.conjure_path, args.join(" "));
 
@@ -266,8 +266,7 @@ fn run_all(
             let command = command.clone();
             let out = Arc::clone(&out);
 
-            let re = Regex::new("[^/]*$").unwrap();
-            if p.meta.params != "" {
+            if !p.meta.params.is_empty() {
                 let param_path = re.replace(&p.path, p.meta.params.clone());
                 let p_idx;
                 {
@@ -341,7 +340,7 @@ fn run_one_problem(
             .unwrap_or(Duration::new(0, 0))
             .as_secs_f64()
     );
-    if let Err(_) = fs::create_dir(&temp) {
+    if fs::create_dir(&temp).is_err() {
         return None;
     }
 
@@ -351,7 +350,7 @@ fn run_one_problem(
     }
 
     let mut param_path = String::new();
-    if param != "" {
+    if !param.is_empty() {
         param_path = "../".to_string() + &param;
     }
 
@@ -379,10 +378,10 @@ fn run_one_problem(
         for line in log_file.split("\n") {
             if line.contains("INFO") {
                 let segs = line.split(" ").collect::<Vec<&str>>();
-                let time_stamp = segs.get(0).unwrap();
+                let time_stamp = segs.first().unwrap();
                 let time_stamp = DateTime::parse_from_rfc3339(time_stamp);
                 if line.contains("Rewriting") {
-                    last_stamp = time_stamp.clone();
+                    last_stamp = time_stamp;
                 }
 
                 if line.contains("Rewritten") {
@@ -393,7 +392,7 @@ fn run_one_problem(
                             .sub(last_stamp.unwrap())
                             .as_seconds_f64(),
                     });
-                    last_stamp = time_stamp.clone();
+                    last_stamp = time_stamp;
                 }
 
                 if line.contains("Solutions") {
@@ -423,8 +422,8 @@ fn run_one_problem(
                 if stats
                     .as_ref()
                     .unwrap()
-                    .savilerowInfo
-                    .SolverSolutionsFound
+                    .savilerow_info
+                    .solver_solutions_found
                     .parse::<i64>()
                     .unwrap()
                     > 0
@@ -436,8 +435,8 @@ fn run_one_problem(
                     time: stats
                         .as_ref()
                         .unwrap()
-                        .savilerowInfo
-                        .SavileRowTotalTime
+                        .savilerow_info
+                        .savile_row_total_time
                         .parse()
                         .unwrap(),
                 });
@@ -445,8 +444,8 @@ fn run_one_problem(
                     name: "Solver".to_string(),
                     time: stats
                         .unwrap()
-                        .savilerowInfo
-                        .SolverTotalTime
+                        .savilerow_info
+                        .solver_total_time
                         .parse()
                         .unwrap(),
                 });
@@ -457,17 +456,17 @@ fn run_one_problem(
 
     let _ = fs::remove_dir_all(temp);
 
-    return match output {
+    match output {
         Ok(_) => Some(BenchmarkResult {
             problem: problem.clone(),
-            times: times,
+            times,
             total_time: elapsed.as_secs_f64(),
             param_runs: Vec::new(),
             found_sols: solved,
             args: Vec::new(),
         }),
         Err(_) => None,
-    };
+    }
 }
 
 fn build_output(results: Vec<Results>, location: &str) {
