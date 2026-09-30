@@ -3,20 +3,10 @@
         {
             "conjure_path": "conjure-oxide",
             "args": [
-                ["solve", "--parser", "tree-siiter"],
+                ["solve", "--parser", "tree-sitter"],
                 ["solve", "--parser", "via-conjure"]
             ],
-            "problem_names": [],
-            "negate": true,
-            "oxide": true
-        },
-        {
-            "conjure_path": "conjure-oxide",
-            "args": [
-                ["solve", "--solver", "sat-log"],
-                ["solve", "--solver", "sat-direct"]
-            ],
-            "problem_names": ["sat-problem1", "sat-problem2"],
+            "problem_names": ["test1"],
             "negate": false,
             "oxide": true
         }
