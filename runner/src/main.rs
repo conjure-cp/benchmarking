@@ -8,7 +8,6 @@ use std::env;
 use std::fs;
 use std::fs::File;
 use std::io::Write;
-use std::ops::Sub;
 use std::path::Path;
 use std::process::Command;
 use std::sync::Arc;
@@ -372,41 +371,50 @@ fn run_one_problem(
 
     if oxide {
         let log_file =
-            fs::read_to_string(format!("{}/conjure-oxide.log", temp)).unwrap_or(String::new());
+            fs::read_to_string(format!("{}/conjure-oxide.log", temp)).unwrap_or_default();
 
-        let mut last_stamp = Ok(DateTime::from_timestamp_nanos(0).fixed_offset());
-        for line in log_file.split("\n") {
-            if line.contains("INFO") {
-                let segs = line.split(" ").collect::<Vec<&str>>();
-                let time_stamp = segs.first().unwrap();
-                let time_stamp = DateTime::parse_from_rfc3339(time_stamp);
-                if line.contains("Rewriting") {
-                    last_stamp = time_stamp;
-                }
-
-                if line.contains("Rewritten") {
-                    times.push(Section {
-                        name: "Rewriting".to_string(),
-                        time: time_stamp
-                            .unwrap()
-                            .sub(last_stamp.unwrap())
-                            .as_seconds_f64(),
-                    });
-                    last_stamp = time_stamp;
-                }
-
-                if line.contains("Solutions") {
-                    solved = true;
-                    times.push(Section {
-                        name: "Solver".to_string(),
-                        time: time_stamp
-                            .unwrap()
-                            .sub(last_stamp.unwrap())
-                            .as_seconds_f64(),
-                    });
-                }
+        let mut stages: Vec<(String, DateTime<chrono::FixedOffset>)> = Vec::new();
+        for line in log_file.lines() {
+            let mut parts = line.split_whitespace();
+            let Some(ts) = parts
+                .next()
+                .and_then(|s| DateTime::parse_from_rfc3339(s).ok())
+            else {
+                continue;
+            };
+            if parts.next() != Some("INFO") {
+                continue;
             }
+            parts.next(); // skip the target, e.g. "conjure::stage:"
+            // message = words up to the first key=value field
+            let name = parts
+                .take_while(|w| !w.contains('='))
+                .collect::<Vec<_>>()
+                .join(" ");
+            if name.is_empty() {
+                continue;
+            }
+            stages.push((name, ts));
         }
+
+        // Each stage lasts until the next INFO line
+        for w in stages.windows(2) {
+            times.push(Section {
+                name: w[0].0.clone(),
+                time: (w[1].1 - w[0].1).as_seconds_f64(),
+            });
+        }
+
+        // The last stage has no end line, so estimate it from total wall time
+        if let (Some(first), Some(last)) = (stages.first(), stages.last()) {
+            let before = (last.1 - first.1).as_seconds_f64();
+            times.push(Section {
+                name: last.0.clone(),
+                time: (elapsed.as_secs_f64() - before).max(0.0),
+            });
+        }
+
+        solved = output.as_ref().map(|o| o.status.success()).unwrap_or(false);
     } else {
         for entry in fs::read_dir(format!("{}/conjure-output", temp)).unwrap() {
             if entry
@@ -454,7 +462,7 @@ fn run_one_problem(
         }
     }
 
-    let _ = fs::remove_dir_all(temp);
+    //let _ = fs::remove_dir_all(temp);
 
     match output {
         Ok(_) => Some(BenchmarkResult {
