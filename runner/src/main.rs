@@ -78,20 +78,20 @@ struct Section {
 #[derive(Serialize, Deserialize, Debug, Clone)]
 struct ConjureStats {
     computer: String,
-    conjure_version: String,
+    conjureVersion: String,
     essence: String,
-    essence_params: Vec<String>,
-    runsolver_info: RunsolverInfo,
-    savilerow_info: SavilerowInfo,
-    savilerow_logs: SavilerowLogs,
-    savilerow_options: Vec<String>,
-    savilerow_version: String,
+    essenceParams: Vec<String>,
+    runsolverInfo: RunsolverInfo,
+    savilerowInfo: SavilerowInfo,
+    savilerowLogs: SavilerowLogs,
+    savilerowOptions: Vec<String>,
+    savilerowVersion: String,
     solver: String,
-    solver_options: Vec<String>,
+    solverOptions: Vec<String>,
     status: String,
     timestamp: String,
-    total_time: f64,
-    use_existing_models: Vec<String>,
+    totalTime: f64,
+    useExistingModels: Vec<String>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -99,21 +99,21 @@ struct RunsolverInfo {}
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 struct SavilerowInfo {
-    savile_row_clause_out: String,
-    savile_row_time_out: String,
-    savile_row_total_time: String,
-    solver_nodes: String,
-    solver_satisfiable: String,
-    solver_setup_time: String,
-    solver_solutions_found: String,
-    solver_solve_time: String,
-    solver_time_out: String,
-    solver_total_time: String,
+    SavileRowClauseOut: String,
+    SavileRowTimeOut: String,
+    SavileRowTotalTime: String,
+    SolverNodes: String,
+    SolverSatisfiable: String,
+    SolverSetupTime: String,
+    SolverSolutionsFound: String,
+    SolverSolveTime: String,
+    SolverTimeOut: String,
+    SolverTotalTime: String,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 struct SavilerowLogs {
-    exit_code: i64,
+    exitCode: i64,
     stdout: Vec<String>,
 }
 
@@ -430,8 +430,8 @@ fn run_one_problem(
                 if stats
                     .as_ref()
                     .unwrap()
-                    .savilerow_info
-                    .solver_solutions_found
+                    .savilerowInfo
+                    .SolverSolutionsFound
                     .parse::<i64>()
                     .unwrap()
                     > 0
@@ -443,8 +443,8 @@ fn run_one_problem(
                     time: stats
                         .as_ref()
                         .unwrap()
-                        .savilerow_info
-                        .savile_row_total_time
+                        .savilerowInfo
+                        .SavileRowTotalTime
                         .parse()
                         .unwrap(),
                 });
@@ -452,8 +452,8 @@ fn run_one_problem(
                     name: "Solver".to_string(),
                     time: stats
                         .unwrap()
-                        .savilerow_info
-                        .solver_total_time
+                        .savilerowInfo
+                        .SolverTotalTime
                         .parse()
                         .unwrap(),
                 });
@@ -462,7 +462,7 @@ fn run_one_problem(
         }
     }
 
-    let _ = fs::remove_dir_all(temp);
+    //let _ = fs::remove_dir_all(temp);
 
     match output {
         Ok(_) => Some(BenchmarkResult {

@@ -9,6 +9,15 @@
             "problem_names": ["test1"],
             "negate": false,
             "oxide": true
+        },
+        {
+            "conjure_path": "conjure",
+            "args": [
+                ["solve"]
+            ],
+            "problem_names": ["test1"],
+            "negate": false,
+            "oxide": false
         }
     ]
 }
