@@ -345,7 +345,7 @@ fn run_one_problem(
 
     let mut extra_opts = "";
     if oxide {
-        extra_opts = "--log-file conjure-oxide.log"
+        extra_opts = "--log-file conjure-oxide.log --log-detail applications"
     }
 
     let mut param_path = String::new();
