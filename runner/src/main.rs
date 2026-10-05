@@ -462,7 +462,7 @@ fn run_one_problem(
         }
     }
 
-    //let _ = fs::remove_dir_all(temp);
+    let _ = fs::remove_dir_all(temp);
 
     match output {
         Ok(_) => Some(BenchmarkResult {
