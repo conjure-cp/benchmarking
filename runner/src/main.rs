@@ -284,6 +284,7 @@ fn run_all(
                     });
                     p_idx = r.results.len() - 1;
                 }
+                println!("{}", param_path);
                 for entry in fs::read_dir(param_path.as_ref()).unwrap() {
                     let out = Arc::clone(&out);
                     if let Ok(e) = entry {

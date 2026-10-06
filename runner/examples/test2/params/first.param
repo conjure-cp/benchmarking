@@ -1,0 +1,1 @@
+[{"config":{"conjure_path":"conjure-oxide","args":[["solve","--parser","tree-sitter"],["solve","--parser","via-conjure"]],"problem_names":["test2"],"negate":false,"oxide":true},"results":[]}]

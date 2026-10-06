@@ -6,7 +6,7 @@
                 ["solve", "--parser", "tree-sitter"],
                 ["solve", "--parser", "via-conjure"]
             ],
-            "problem_names": ["test1"],
+            "problem_names": ["test2"],
             "negate": false,
             "oxide": true
         },
@@ -15,7 +15,7 @@
             "args": [
                 ["solve"]
             ],
-            "problem_names": ["test1"],
+            "problem_names": ["test2"],
             "negate": false,
             "oxide": false
         }
