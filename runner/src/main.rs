@@ -76,6 +76,7 @@ struct Section {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
+#[allow(non_snake_case)]
 struct ConjureStats {
     computer: String,
     conjureVersion: String,
@@ -98,6 +99,7 @@ struct ConjureStats {
 struct RunsolverInfo {}
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
+#[allow(non_snake_case)]
 struct SavilerowInfo {
     SavileRowClauseOut: String,
     SavileRowTimeOut: String,
@@ -112,6 +114,7 @@ struct SavilerowInfo {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
+#[allow(non_snake_case)]
 struct SavilerowLogs {
     exitCode: i64,
     stdout: Vec<String>,
