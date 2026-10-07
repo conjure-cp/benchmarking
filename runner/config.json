@@ -3,8 +3,7 @@
         {
             "conjure_path": "conjure-oxide",
             "args": [
-                ["solve", "--parser", "tree-sitter"],
-                ["solve", "--parser", "via-conjure"]
+                ["solve"]
             ],
             "problem_names": ["test2"],
             "negate": false,
