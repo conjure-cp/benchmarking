@@ -1,0 +1,24 @@
+{
+    "options": [
+        {
+            "conjure_path": "conjure-oxide",
+            "args": [
+                ["solve", "--responses", "1"],
+                ["solve", "--responses", "2"]
+            ],
+            "problem_names": ["sumfree"],
+            "negate": false,
+            "oxide": true
+        },
+        {
+            "conjure_path": "conjure",
+            "args": [
+                ["solve", "--channelling=no", "-aai", "--responses", "1"],
+                ["solve", "--channelling=no", "-aai", "--responses", "2"]
+            ],
+            "problem_names": ["sumfree"],
+            "negate": false,
+            "oxide": false
+        }
+    ]
+}
