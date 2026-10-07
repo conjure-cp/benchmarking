@@ -1,0 +1,34 @@
+MINION 3
+# CSETopLevel_number = 0
+# CSETopLevel_eliminated_expressions = 0
+# CSETopLevel_total_size = 0
+# CSE_active_number = 4
+# CSE_active_eliminated_expressions = 9
+# CSE_active_total_size = 10
+**VARIABLES**
+DISCRETE Ticks_Explicit_00002 #
+{1..7}
+DISCRETE Ticks_Explicit_00003 #
+{3..8}
+DISCRETE aux1 #Active-CSE: 2 occurrences of this expression or equivalent: (Ticks_Explicit_00002 - Ticks_Explicit_00003)
+{-7..-1}
+DISCRETE aux2 #Active-CSE: 2 occurrences of this expression or equivalent: (-Ticks_Explicit_00002)
+{-7..-1}
+DISCRETE aux3 #Active-CSE: 2 occurrences of this expression or equivalent: (-Ticks_Explicit_00003)
+{-8..-3}
+**SEARCH**
+PRINT[[Ticks_Explicit_00002],[Ticks_Explicit_00003],[Ticks_Explicit_00003]]
+MINIMISING Ticks_Explicit_00003
+VARORDER STATIC [Ticks_Explicit_00002, Ticks_Explicit_00003]
+VARORDER STATIC [Ticks_Explicit_00002,Ticks_Explicit_00003,aux1,aux2,aux3]
+**CONSTRAINTS**
+reify(gaceq(Ticks_Explicit_00002,Ticks_Explicit_00003), 0)
+minuseq(aux2, Ticks_Explicit_00002)
+minuseq(aux3, Ticks_Explicit_00003)
+diseq(aux2,aux3)
+diseq(aux2,aux1)
+diseq(aux3,aux1)
+ineq(Ticks_Explicit_00002, Ticks_Explicit_00003, -1)
+weightedsumleq([1,-1],[Ticks_Explicit_00002,Ticks_Explicit_00003],aux1)
+weightedsumgeq([1,-1],[Ticks_Explicit_00002,Ticks_Explicit_00003],aux1)
+**EOF**
