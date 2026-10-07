@@ -1,0 +1,22 @@
+{
+    "options": [
+        {
+            "conjure_path": "conjure-oxide",
+            "args": [
+                ["solve"]
+            ],
+            "problem_names": ["Knapsack"],
+            "negate": false,
+            "oxide": true
+        },
+        {
+            "conjure_path": "conjure",
+            "args": [
+                ["solve"]
+            ],
+            "problem_names": ["Knapsack"],
+            "negate": false,
+            "oxide": false
+        }
+    ]
+}
