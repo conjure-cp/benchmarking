@@ -1,10 +1,10 @@
-{"computer": "pc9-002", "conjureVersion": "Conjure v2.6.1 (Repository version 6498884 (2026-06-27 20:23:03 +0100))",
- "essence": "../examples/Knapsack/Knapsack.essence", "essenceParams": ["../examples/Knapsack/params/first.param"],
- "runsolverInfo": {},
+{"computer": "skcesyhappycomputa",
+ "conjureVersion": "Conjure v2.6.1 (Repository version 6498884 (2026-06-27 20:23:03 +0100))",
+ "essence": "Knapsack.essence", "essenceParams": ["params/first.param"], "runsolverInfo": {},
  "savilerowInfo":
-     {"SavileRowClauseOut": "0", "SavileRowTimeOut": "0", "SavileRowTotalTime": "0.105", "SolverNodes": "12",
-      "SolverSatisfiable": "1", "SolverSetupTime": "0", "SolverSolutionsFound": "3", "SolverSolveTime": "0",
-      "SolverTimeOut": "0", "SolverTotalTime": "0"},
+     {"SavileRowClauseOut": "0", "SavileRowTimeOut": "0", "SavileRowTotalTime": "0.039", "SolverNodes": "12",
+      "SolverSatisfiable": "1", "SolverSetupTime": "1e-05", "SolverSolutionsFound": "3", "SolverSolveTime": "8e-06",
+      "SolverTimeOut": "0", "SolverTotalTime": "4.5e-05"},
  "savilerowLogs":
      {"exitCode": 0,
       "stdout":
@@ -13,5 +13,5 @@
            "Created information file conjure-output/model000001-first.eprime-info"]},
  "savilerowOptions": [],
  "savilerowVersion": "Savile Row 1.11.1 (Repository Version: 71edadfeb (2026-03-30 21:41:48 +0100))",
- "solver": "minion", "solverOptions": [], "status": "OK", "timestamp": "2026-10-06T23:03:16.201452888Z",
- "totalTime": 0.10, "useExistingModels": []}
+ "solver": "minion", "solverOptions": [], "status": "OK", "timestamp": "2026-10-08T13:13:44.839112751Z",
+ "totalTime": 0.04, "useExistingModels": []}

@@ -1,0 +1,74 @@
+language ESSENCE' 1.0
+
+given n: int(1..)
+given k: int(1..)
+find S_Explicit: matrix indexed by [int(1..k)] of int(1..n)
+branching on [S_Explicit]
+such that
+    and([and([S_Explicit[q3] + S_Explicit[q4] <= n ->
+              !or([S_Explicit[q6] = S_Explicit[q3] + S_Explicit[q4] | q6 : int(1..k)])
+                  | q4 : int(1..k)])
+             | q3 : int(1..k)]),
+    and([S_Explicit[q1] < S_Explicit[q1 + 1] | q1 : int(1..k - 1)])
+
+$ Conjure's
+$ {"finds": [{"Name": "S"}], "givens": [{"Name": "n"}, {"Name": "k"}], "enumGivens": [], "enumLettings": [],
+$  "lettings": [], "unnameds": [], "strategyQ": {"PickFirst": []}, "strategyA": {"Compact": []},
+$  "trailCompact":
+$      [[1, 1, 1], [1, 1, 1], [1, 1, 2], [1, 1, 1], [1, 1, 1], [1, 1, 1], [1, 1, 1], [1, 1, 1], [1, 1, 1], [1, 1, 1],
+$       [1, 1, 1], [1, 1, 1], [1, 1, 1], [1, 1, 1], [1, 1, 1]],
+$  "nameGenState": [["q", 7]], "nbExtraGivens": 0,
+$  "representations":
+$      [[{"Name": "k"},
+$        {"DomainInt": [{"TagInt": []}, [{"RangeLowerBounded": {"Constant": {"ConstantInt": [{"TagInt": []}, 1]}}}]]}],
+$       [{"Name": "n"},
+$        {"DomainInt": [{"TagInt": []}, [{"RangeLowerBounded": {"Constant": {"ConstantInt": [{"TagInt": []}, 1]}}}]]}],
+$       [{"Name": "S"},
+$        {"DomainSet":
+$             [{"Set_Explicit": []},
+$              {"SizeAttr_Size":
+$                   {"Reference":
+$                        [{"Name": "k"},
+$                         {"DeclHasRepr":
+$                              ["Given", {"Name": "k"},
+$                               {"DomainInt":
+$                                    [{"TagInt": []},
+$                                     [{"RangeLowerBounded": {"Constant": {"ConstantInt": [{"TagInt": []}, 1]}}}]]}]}]}},
+$              {"DomainInt":
+$                   [{"TagInt": []},
+$                    [{"RangeBounded":
+$                          [{"Constant": {"ConstantInt": [{"TagInt": []}, 1]}},
+$                           {"Reference":
+$                                [{"Name": "n"},
+$                                 {"DeclHasRepr":
+$                                      ["Given", {"Name": "n"},
+$                                       {"DomainInt":
+$                                            [{"TagInt": []},
+$                                             [{"RangeLowerBounded":
+$                                                   {"Constant": {"ConstantInt": [{"TagInt": []}, 1]}}}]]}]}]}]}]]}]}]],
+$  "representationsTree":
+$      [[{"Name": "S"}, [{"rootLabel": {"Set_Explicit": []}, "subForest": [{"subForest": []}]}]],
+$       [{"Name": "k"}, [{"subForest": []}]], [{"Name": "n"}, [{"subForest": []}]]],
+$  "originalDomains":
+$      [[{"Name": "n"},
+$        {"DomainInt": [{"TagInt": []}, [{"RangeLowerBounded": {"Constant": {"ConstantInt": [{"TagInt": []}, 1]}}}]]}],
+$       [{"Name": "k"},
+$        {"DomainInt": [{"TagInt": []}, [{"RangeLowerBounded": {"Constant": {"ConstantInt": [{"TagInt": []}, 1]}}}]]}],
+$       [{"Name": "S"},
+$        {"DomainSet":
+$             [[], {"SizeAttr_Size": {"Reference": [{"Name": "k"}, null]}},
+$              {"DomainInt":
+$                   [{"TagInt": []},
+$                    [{"RangeBounded":
+$                          [{"Constant": {"ConstantInt": [{"TagInt": []}, 1]}},
+$                           {"Reference": [{"Name": "n"}, null]}]}]]}]}]],
+$  "trailGeneralised":
+$      [[3877688289289514255, 2720289022957448158], [6106930678758737481, -986745890184808168],
+$       [-2567504726432872269, -7661405695020959548], [-2152990709947868739, 8521052777552547468],
+$       [56664533248572568, 3230780152794241526], [8744321138000543427, -4401885883063330577],
+$       [-1421823594738595162, -3749165943908891272], [6490667401820913793, 3517282963893861533],
+$       [3131809312878199346, 2275379255369051099], [5235634845883498526, -597107485596047132],
+$       [-1671102652762741822, -1468079046426717148], [-7707538139662989975, 258902896338239332],
+$       [-8158955716529528668, 8511987846602661979], [-8494089013078456730, -3499544401983696168],
+$       [4831300585827364461, 4484011927465032225]],
+$  "trailVerbose": [], "trailRewrites": []}
