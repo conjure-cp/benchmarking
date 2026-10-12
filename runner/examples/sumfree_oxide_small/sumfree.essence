@@ -1,0 +1,5 @@
+language Essence 1.3
+given n, k : int(1..)
+find S : set (size k) of int(1..n)
+such that
+    forAll x in S . forAll y in S . (x + y <= n) -> !((x + y) in S)
