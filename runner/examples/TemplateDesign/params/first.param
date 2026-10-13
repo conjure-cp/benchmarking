@@ -1,0 +1,13 @@
+letting n_slots      be 9
+letting n_templates  be 2
+letting n_variations be 7
+
+letting demand be function
+    ( 1 -->  250
+    , 2 -->  255
+    , 3 -->  260
+    , 4 -->  500
+    , 5 -->  500
+    , 6 -->  800
+    , 7 --> 1100
+    )
