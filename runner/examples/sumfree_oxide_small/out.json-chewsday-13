@@ -1,0 +1,610 @@
+[
+    {
+        "config": {
+            "conjure_path": "conjure-oxide",
+            "args": [
+                [
+                    "solve",
+                    "--responses",
+                    "1"
+                ],
+                [
+                    "solve",
+                    "--responses",
+                    "2"
+                ]
+            ],
+            "problem_names": [
+                "sumfree"
+            ],
+            "negate": false,
+            "oxide": true
+        },
+        "results": [
+            {
+                "problem": {
+                    "meta": {
+                        "name": "sumfree",
+                        "params": "params"
+                    },
+                    "path": "examples/sumfree_oxide_small/sumfree.essence"
+                },
+                "total_time": -1.0,
+                "times": [],
+                "param_runs": [
+                    {
+                        "name": "5-11.param",
+                        "total_time": 0.257917465,
+                        "times": [
+                            {
+                                "name": "resolved rule sets",
+                                "time": 0.000211
+                            },
+                            {
+                                "name": "parsing input model",
+                                "time": 0.002884
+                            },
+                            {
+                                "name": "parsing input model",
+                                "time": 0.001057
+                            },
+                            {
+                                "name": "Replaced k given with letting.",
+                                "time": 6e-6
+                            },
+                            {
+                                "name": "Replaced n given with letting.",
+                                "time": 0.000021
+                            },
+                            {
+                                "name": "rewriting model",
+                                "time": 0.202619
+                            },
+                            {
+                                "name": "building solver model",
+                                "time": 0.001518
+                            },
+                            {
+                                "name": "running solver",
+                                "time": 0.04960146500000001
+                            }
+                        ],
+                        "found_sols": true
+                    },
+                    {
+                        "name": "5-15.param",
+                        "total_time": 1.138199568,
+                        "times": [
+                            {
+                                "name": "resolved rule sets",
+                                "time": 0.000204
+                            },
+                            {
+                                "name": "parsing input model",
+                                "time": 0.002452
+                            },
+                            {
+                                "name": "parsing input model",
+                                "time": 0.001649
+                            },
+                            {
+                                "name": "Replaced k given with letting.",
+                                "time": 0.009747
+                            },
+                            {
+                                "name": "Replaced n given with letting.",
+                                "time": 0.000053
+                            },
+                            {
+                                "name": "rewriting model",
+                                "time": 1.022018
+                            },
+                            {
+                                "name": "building solver model",
+                                "time": 0.002685
+                            },
+                            {
+                                "name": "running solver",
+                                "time": 0.09939156800000015
+                            }
+                        ],
+                        "found_sols": true
+                    },
+                    {
+                        "name": "5-13.param",
+                        "total_time": 0.490736689,
+                        "times": [
+                            {
+                                "name": "resolved rule sets",
+                                "time": 0.008547
+                            },
+                            {
+                                "name": "parsing input model",
+                                "time": 0.00141
+                            },
+                            {
+                                "name": "parsing input model",
+                                "time": 0.002298
+                            },
+                            {
+                                "name": "Replaced k given with letting.",
+                                "time": 0.000148
+                            },
+                            {
+                                "name": "Replaced n given with letting.",
+                                "time": 0.011293
+                            },
+                            {
+                                "name": "rewriting model",
+                                "time": 0.393212
+                            },
+                            {
+                                "name": "building solver model",
+                                "time": 0.002811
+                            },
+                            {
+                                "name": "running solver",
+                                "time": 0.071017689
+                            }
+                        ],
+                        "found_sols": true
+                    },
+                    {
+                        "name": "5-17.param",
+                        "total_time": 4.994997003,
+                        "times": [
+                            {
+                                "name": "resolved rule sets",
+                                "time": 0.000208
+                            },
+                            {
+                                "name": "parsing input model",
+                                "time": 0.001542
+                            },
+                            {
+                                "name": "parsing input model",
+                                "time": 0.001052
+                            },
+                            {
+                                "name": "Replaced k given with letting.",
+                                "time": 3e-6
+                            },
+                            {
+                                "name": "Replaced n given with letting.",
+                                "time": 0.000022
+                            },
+                            {
+                                "name": "rewriting model",
+                                "time": 4.840907
+                            },
+                            {
+                                "name": "building solver model",
+                                "time": 0.004909
+                            },
+                            {
+                                "name": "running solver",
+                                "time": 0.1463540029999999
+                            }
+                        ],
+                        "found_sols": true
+                    },
+                    {
+                        "name": "5-19.param",
+                        "total_time": 15.667133244,
+                        "times": [
+                            {
+                                "name": "resolved rule sets",
+                                "time": 0.000209
+                            },
+                            {
+                                "name": "parsing input model",
+                                "time": 0.00252
+                            },
+                            {
+                                "name": "parsing input model",
+                                "time": 0.000949
+                            },
+                            {
+                                "name": "Replaced k given with letting.",
+                                "time": 7e-6
+                            },
+                            {
+                                "name": "Replaced n given with letting.",
+                                "time": 0.000025
+                            },
+                            {
+                                "name": "rewriting model",
+                                "time": 15.443115
+                            },
+                            {
+                                "name": "building solver model",
+                                "time": 0.030843
+                            },
+                            {
+                                "name": "running solver",
+                                "time": 0.18946524400000087
+                            }
+                        ],
+                        "found_sols": true
+                    },
+                    {
+                        "name": "5-21.param",
+                        "total_time": 69.834895247,
+                        "times": [
+                            {
+                                "name": "resolved rule sets",
+                                "time": 0.000219
+                            },
+                            {
+                                "name": "parsing input model",
+                                "time": 0.003076
+                            },
+                            {
+                                "name": "parsing input model",
+                                "time": 0.001012
+                            },
+                            {
+                                "name": "Replaced k given with letting.",
+                                "time": 7e-6
+                            },
+                            {
+                                "name": "Replaced n given with letting.",
+                                "time": 0.000027
+                            },
+                            {
+                                "name": "rewriting model",
+                                "time": 69.565852
+                            },
+                            {
+                                "name": "building solver model",
+                                "time": 0.00609
+                            },
+                            {
+                                "name": "running solver",
+                                "time": 0.25861224700000207
+                            }
+                        ],
+                        "found_sols": true
+                    },
+                    {
+                        "name": "5-23.param",
+                        "total_time": 325.181086065,
+                        "times": [
+                            {
+                                "name": "resolved rule sets",
+                                "time": 0.00022
+                            },
+                            {
+                                "name": "parsing input model",
+                                "time": 0.00314
+                            },
+                            {
+                                "name": "parsing input model",
+                                "time": 0.006618
+                            },
+                            {
+                                "name": "Replaced k given with letting.",
+                                "time": 0.001704
+                            },
+                            {
+                                "name": "Replaced n given with letting.",
+                                "time": 0.000042
+                            },
+                            {
+                                "name": "rewriting model",
+                                "time": 324.810258
+                            },
+                            {
+                                "name": "building solver model",
+                                "time": 0.007316
+                            },
+                            {
+                                "name": "running solver",
+                                "time": 0.3517880649999938
+                            }
+                        ],
+                        "found_sols": true
+                    }
+                ],
+                "found_sols": true,
+                "args": [
+                    "solve",
+                    "--responses",
+                    "1"
+                ]
+            },
+            {
+                "problem": {
+                    "meta": {
+                        "name": "sumfree",
+                        "params": "params"
+                    },
+                    "path": "examples/sumfree_oxide_small/sumfree.essence"
+                },
+                "total_time": -1.0,
+                "times": [],
+                "param_runs": [
+                    {
+                        "name": "5-15.param",
+                        "total_time": 1.2822193,
+                        "times": [
+                            {
+                                "name": "resolved rule sets",
+                                "time": 0.000224
+                            },
+                            {
+                                "name": "parsing input model",
+                                "time": 0.001607
+                            },
+                            {
+                                "name": "parsing input model",
+                                "time": 0.00007
+                            },
+                            {
+                                "name": "Replaced k given with letting.",
+                                "time": 2e-6
+                            },
+                            {
+                                "name": "Replaced n given with letting.",
+                                "time": 0.000024
+                            },
+                            {
+                                "name": "rewriting model",
+                                "time": 1.157518
+                            },
+                            {
+                                "name": "building solver model",
+                                "time": 0.002783
+                            },
+                            {
+                                "name": "running solver",
+                                "time": 0.11999129999999991
+                            }
+                        ],
+                        "found_sols": true
+                    },
+                    {
+                        "name": "5-19.param",
+                        "total_time": 16.069519598,
+                        "times": [
+                            {
+                                "name": "resolved rule sets",
+                                "time": 0.00773
+                            },
+                            {
+                                "name": "parsing input model",
+                                "time": 0.001418
+                            },
+                            {
+                                "name": "parsing input model",
+                                "time": 0.006686
+                            },
+                            {
+                                "name": "Replaced k given with letting.",
+                                "time": 0.00704
+                            },
+                            {
+                                "name": "Replaced n given with letting.",
+                                "time": 0.007098
+                            },
+                            {
+                                "name": "rewriting model",
+                                "time": 15.844796
+                            },
+                            {
+                                "name": "building solver model",
+                                "time": 0.004233
+                            },
+                            {
+                                "name": "running solver",
+                                "time": 0.19051859799999882
+                            }
+                        ],
+                        "found_sols": true
+                    },
+                    {
+                        "name": "5-17.param",
+                        "total_time": 7.182665929,
+                        "times": [
+                            {
+                                "name": "resolved rule sets",
+                                "time": 0.003881
+                            },
+                            {
+                                "name": "parsing input model",
+                                "time": 0.001476
+                            },
+                            {
+                                "name": "parsing input model",
+                                "time": 0.000069
+                            },
+                            {
+                                "name": "Replaced k given with letting.",
+                                "time": 3e-6
+                            },
+                            {
+                                "name": "Replaced n given with letting.",
+                                "time": 0.000023
+                            },
+                            {
+                                "name": "rewriting model",
+                                "time": 7.020424
+                            },
+                            {
+                                "name": "building solver model",
+                                "time": 0.004927
+                            },
+                            {
+                                "name": "running solver",
+                                "time": 0.15186292899999998
+                            }
+                        ],
+                        "found_sols": true
+                    },
+                    {
+                        "name": "5-11.param",
+                        "total_time": 0.932279951,
+                        "times": [
+                            {
+                                "name": "resolved rule sets",
+                                "time": 0.007005
+                            },
+                            {
+                                "name": "parsing input model",
+                                "time": 0.012279
+                            },
+                            {
+                                "name": "parsing input model",
+                                "time": 0.000338
+                            },
+                            {
+                                "name": "Replaced k given with letting.",
+                                "time": 0.001358
+                            },
+                            {
+                                "name": "Replaced n given with letting.",
+                                "time": 0.001355
+                            },
+                            {
+                                "name": "rewriting model",
+                                "time": 0.846972
+                            },
+                            {
+                                "name": "building solver model",
+                                "time": 0.00449
+                            },
+                            {
+                                "name": "running solver",
+                                "time": 0.058482951000000005
+                            }
+                        ],
+                        "found_sols": true
+                    },
+                    {
+                        "name": "5-13.param",
+                        "total_time": 1.29348384,
+                        "times": [
+                            {
+                                "name": "resolved rule sets",
+                                "time": 0.007118
+                            },
+                            {
+                                "name": "parsing input model",
+                                "time": 0.00167
+                            },
+                            {
+                                "name": "parsing input model",
+                                "time": 0.000074
+                            },
+                            {
+                                "name": "Replaced k given with letting.",
+                                "time": 3e-6
+                            },
+                            {
+                                "name": "Replaced n given with letting.",
+                                "time": 0.000023
+                            },
+                            {
+                                "name": "rewriting model",
+                                "time": 1.204167
+                            },
+                            {
+                                "name": "building solver model",
+                                "time": 0.00262
+                            },
+                            {
+                                "name": "running solver",
+                                "time": 0.07780883999999988
+                            }
+                        ],
+                        "found_sols": true
+                    },
+                    {
+                        "name": "5-21.param",
+                        "total_time": 70.957312347,
+                        "times": [
+                            {
+                                "name": "resolved rule sets",
+                                "time": 0.005102
+                            },
+                            {
+                                "name": "parsing input model",
+                                "time": 0.009914
+                            },
+                            {
+                                "name": "parsing input model",
+                                "time": 0.000221
+                            },
+                            {
+                                "name": "Replaced k given with letting.",
+                                "time": 3e-6
+                            },
+                            {
+                                "name": "Replaced n given with letting.",
+                                "time": 0.000025
+                            },
+                            {
+                                "name": "rewriting model",
+                                "time": 70.678972
+                            },
+                            {
+                                "name": "building solver model",
+                                "time": 0.0134
+                            },
+                            {
+                                "name": "running solver",
+                                "time": 0.24967534699999305
+                            }
+                        ],
+                        "found_sols": true
+                    },
+                    {
+                        "name": "5-23.param",
+                        "total_time": 322.287792897,
+                        "times": [
+                            {
+                                "name": "resolved rule sets",
+                                "time": 0.000247
+                            },
+                            {
+                                "name": "parsing input model",
+                                "time": 0.001422
+                            },
+                            {
+                                "name": "parsing input model",
+                                "time": 0.00007
+                            },
+                            {
+                                "name": "Replaced k given with letting.",
+                                "time": 3e-6
+                            },
+                            {
+                                "name": "Replaced n given with letting.",
+                                "time": 0.000021
+                            },
+                            {
+                                "name": "rewriting model",
+                                "time": 321.937491
+                            },
+                            {
+                                "name": "building solver model",
+                                "time": 0.006009
+                            },
+                            {
+                                "name": "running solver",
+                                "time": 0.34252989699996306
+                            }
+                        ],
+                        "found_sols": true
+                    }
+                ],
+                "found_sols": true,
+                "args": [
+                    "solve",
+                    "--responses",
+                    "2"
+                ]
+            }
+        ]
+    }
+]
