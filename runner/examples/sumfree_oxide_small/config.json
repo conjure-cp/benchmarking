@@ -3,8 +3,8 @@
         {
             "conjure_path": "conjure-oxide",
             "args": [
-                ["solve", "--responses", "1"],
-                ["solve", "--responses", "2"]
+                ["solve", "-h", "i", "--responses", "1"],
+                ["solve", "-h", "i", "--responses", "2"]
             ],
             "problem_names": ["sumfree"],
             "negate": false,
