@@ -3,18 +3,26 @@
         {
             "conjure_path": "conjure-oxide",
             "args": [
-                ["solve"]
+                [
+                    "solve"
+                ]
             ],
-            "problem_names": ["test2"],
+            "problem_names": [
+                "test1"
+            ],
             "negate": false,
             "oxide": true
         },
         {
             "conjure_path": "conjure",
             "args": [
-                ["solve"]
+                [
+                    "solve"
+                ]
             ],
-            "problem_names": ["test2"],
+            "problem_names": [
+                "test1"
+            ],
             "negate": false,
             "oxide": false
         }
