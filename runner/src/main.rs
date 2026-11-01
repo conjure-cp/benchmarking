@@ -9,6 +9,7 @@ use std::fs;
 use std::fs::File;
 use std::io::Write;
 use std::path::Path;
+use std::println;
 use std::process::Command;
 use std::sync::Arc;
 use std::sync::Mutex;
@@ -123,15 +124,17 @@ struct SavilerowLogs {
 fn main() {
     let args: Vec<String> = env::args().collect();
     let default_output_file = String::from("out.json");
+    let default_temp_dir = String::from("runner_temp/");
 
     if args.len() < 3 {
-        println!("Expected useage: runner CONFIG.FILE PROBLEM.DIR [OUTPUT.FILE]");
+        println!("Expected usage: runner CONFIG.FILE PROBLEM.DIR [OUTPUT.FILE] [TEMP.DIR]");
         return;
     }
 
     let config = args.get(1).unwrap();
     let problems = args.get(2).unwrap();
     let output = args.get(3).unwrap_or(&default_output_file);
+    let temp_dir = args.get(4).unwrap_or(&default_temp_dir);
 
     if !validate_args(config, problems) {
         return;
@@ -149,7 +152,7 @@ fn main() {
     let pool = ThreadPool::new(max(2, num_cpus::get() / 2));
 
     let problems = find_problems(problems);
-    run_benchmarks(problems, configs, output, pool);
+    run_benchmarks(problems, configs, output, temp_dir.to_string(), pool);
 }
 
 fn validate_args(config: &str, problems: &str) -> bool {
@@ -204,7 +207,13 @@ fn find_problems(dir: &str) -> Vec<Problem> {
     out
 }
 
-fn run_benchmarks(problems: Vec<Problem>, configs: Configs, output_file: &str, pool: ThreadPool) {
+fn run_benchmarks(
+    problems: Vec<Problem>,
+    configs: Configs,
+    output_file: &str,
+    temp_dir: String,
+    pool: ThreadPool,
+) {
     let out: Arc<Mutex<Vec<Results>>> = Arc::new(Mutex::new(Vec::new()));
 
     let write_cp = Arc::clone(&out);
@@ -228,7 +237,7 @@ fn run_benchmarks(problems: Vec<Problem>, configs: Configs, output_file: &str, p
 
     for c in configs.options {
         let out = Arc::clone(&out);
-        run_all(&problems, c, out, &pool);
+        run_all(&problems, c, out, temp_dir.clone(), &pool);
     }
 
     pool.join();
@@ -240,6 +249,7 @@ fn run_all(
     problems: &Vec<Problem>,
     config: Config,
     out: Arc<Mutex<Vec<Results>>>,
+    temp_dir: String,
     pool: &ThreadPool,
 ) {
     let idx;
@@ -284,7 +294,7 @@ fn run_all(
                     });
                     p_idx = r.results.len() - 1;
                 }
-                println!("{}", param_path);
+
                 for entry in fs::read_dir(param_path.as_ref()).unwrap() {
                     let out = Arc::clone(&out);
                     if let Ok(e) = entry {
@@ -292,8 +302,11 @@ fn run_all(
                         let path = path.to_str().unwrap().to_string();
                         let com = command.clone();
                         let prob = p.clone();
+                        let task_temp_dir = temp_dir.clone();
                         pool.execute(move || {
-                            if let Some(res) = run_one_problem(&prob, com, config.oxide, path) {
+                            if let Some(res) =
+                                run_one_problem(&prob, com, config.oxide, path, &task_temp_dir)
+                            {
                                 let mut out = out.lock().unwrap();
                                 let r: &mut Results = out.get_mut(idx).unwrap();
                                 let b: &mut BenchmarkResult = r.results.get_mut(p_idx).unwrap();
@@ -311,8 +324,11 @@ fn run_all(
                 // Squash into one result with all the different params
             } else {
                 let c_args = args.clone();
+                let task_temp_dir = temp_dir.clone();
                 pool.execute(move || {
-                    if let Some(res) = run_one_problem(&p, command, config.oxide, "".to_string()) {
+                    if let Some(res) =
+                        run_one_problem(&p, command, config.oxide, "".to_string(), &task_temp_dir)
+                    {
                         let mut out = out.lock().unwrap();
                         let r: &mut Results = out.get_mut(idx).unwrap();
                         r.results.push(BenchmarkResult {
@@ -332,11 +348,13 @@ fn run_one_problem(
     command: String,
     oxide: bool,
     param: String,
+    temp_dir: &String,
 ) -> Option<BenchmarkResult> {
     let mut cmd = Command::new("bash");
     let start = SystemTime::now();
     let temp = format!(
-        "{}-{}",
+        "{}{}-{}",
+        temp_dir,
         problem.meta.name,
         start
             .duration_since(SystemTime::UNIX_EPOCH)
@@ -359,10 +377,14 @@ fn run_one_problem(
 
     let start = Instant::now();
 
+    println!(
+        "cd {}; {} {} ../{} {}",
+        temp, command, extra_opts, problem.path, param_path
+    );
     let output = cmd
         .arg("-c")
         .arg(format!(
-            "cd {}; {} {} ../{} {}",
+            "cd {}; {} {} ../../{} ../{}",
             temp, command, extra_opts, problem.path, param_path
         ))
         .output();
@@ -466,7 +488,7 @@ fn run_one_problem(
         }
     }
 
-    //let _ = fs::remove_dir_all(temp);
+    // let _ = fs::remove_dir_all(temp);
 
     match output {
         Ok(_) => Some(BenchmarkResult {
