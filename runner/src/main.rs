@@ -378,7 +378,7 @@ fn run_one_problem(
     let start = Instant::now();
 
     println!(
-        "cd {}; {} {} ../{} {}",
+        "cd {}; {} {} ../../{} ../{}",
         temp, command, extra_opts, problem.path, param_path
     );
     let output = cmd
