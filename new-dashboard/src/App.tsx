@@ -5,10 +5,8 @@ import {
 	Heading,
 	Spinner,
 	Show,
-	Text,
 } from "@chakra-ui/react";
 import { fetchCSVFile } from "@/helper/data/fetchCSVFile";
-import Papa from "papaparse";
 import { useQuery } from "@tanstack/react-query";
 import { ResultTable } from "./components/ResultTable";
 import type { SolveResult } from "./types/SolveResult";
