@@ -32,6 +32,9 @@ function PageControls({
 			>
 				Next Page
 			</Button>
+			<Button variant={"surface"} size={"xs"}>
+				Filter
+			</Button>
 		</Center>
 	);
 }

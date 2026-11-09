@@ -29,8 +29,6 @@ export default function MyApp() {
 				<Demo></Demo>
 			</Center>
 
-			<Button>Meow</Button>
-
 			<Box>
 				<Show when={isLoading}>
 					<Center>
