@@ -2,6 +2,7 @@ import type { SolveResult } from "@/types/SolveResult";
 import { Button, Table, Center, Text, FormatNumber } from "@chakra-ui/react";
 import React from "react";
 import { CloseButton, Dialog, Portal } from "@chakra-ui/react";
+import { FilterBody } from "./FilterBody";
 
 const Demo = () => {
 	return (
@@ -19,10 +20,7 @@ const Demo = () => {
 							<Dialog.Title>Dialog Title</Dialog.Title>
 						</Dialog.Header>
 						<Dialog.Body>
-							<p>
-								Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
-								eiusmod tempor incididunt ut labore et dolore magna aliqua.
-							</p>
+							<FilterBody />
 						</Dialog.Body>
 						<Dialog.Footer>
 							<Dialog.ActionTrigger asChild>
