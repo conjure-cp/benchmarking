@@ -1,0 +1,1 @@
+find collected_essence/ -name "config.json" | parallel runsolver --timestamp -C 6000 -W 600 -R 8192 -V 102400 -w watch.log -v values.log -o tool_output.log ./runner {} {//} outputs/'{= $_=(split "/", $_)[-2] =}'_out.json

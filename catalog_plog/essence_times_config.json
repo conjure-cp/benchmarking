@@ -1,0 +1,26 @@
+{
+    "options": [
+        {
+            "conjure_path": "conjure",
+            "args": [
+                [
+                    "solve"
+                ]
+            ],
+            "problem_names": null,
+            "negate": false,
+            "oxide": false
+        },
+        {
+            "conjure_path": "conjure-oxide",
+            "args": [
+                [
+                    "solve"
+                ]
+            ],
+            "problem_names": null,
+            "negate": false,
+            "oxide": true
+        }
+    ]
+}

@@ -1,0 +1,15 @@
+name,params,total_time,args,resolved rule sets,parsing input model,rewriting model,compact structural cost unavailable; using domain cardinality for this choice,building solver model,running solver
+params_gen.74,catfood_3.param,3.620340841,solve,,,,,,
+params_gen.74,herbs_2.param,29.065267295,solve,,,,,,
+params_gen.74,catfood_2.param,32.82893816,solve,,,,,,
+params_gen.74,magazine_inserts_2.param,34.713546509,solve,,,,,,
+params_gen.74,herbs_3.param,61.666824297,solve,,,,,,
+params_gen.74,magazine_inserts_3.param,63.073990296,solve,,,,,,
+params_gen.74,magazine_inserts_4.param,65.974570003,solve,,,,,,
+params_gen.74,herbs_2.param,0.614545066,solve,0.038834,0.107444,0.002216,0.01821,0.000867,0.316542066
+params_gen.74,catfood_2.param,2.813819318,solve,0.070807,0.072221,0.054169,1.5653350000000001,0.140685,0.783546318
+params_gen.74,catfood_3.param,3.077234212,solve,0.002275,0.000744,0.00169,1.694543,0.066383,1.093336212
+params_gen.74,magazine_inserts_2.param,3.216775039,solve,0.115,0.132173,0.001871,1.802729,0.002314,1.1046360389999998
+params_gen.74,herbs_3.param,3.838337669,solve,0.001968,0.029588,0.05931,2.44061,0.105409,1.0098516690000001
+params_gen.74,magazine_inserts_4.param,4.433557083,solve,0.191302,0.002002,0.35942,2.40684,0.059897,0.9874180830000001
+params_gen.74,magazine_inserts_3.param,4.806687621,solve,0.076696,0.044188,0.002633,2.517455,0.003558,2.036178621
