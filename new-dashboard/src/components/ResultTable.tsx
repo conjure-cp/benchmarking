@@ -2,9 +2,10 @@ import type { SolveResult } from "@/types/SolveResult";
 import { Button, Table, Center, Text, FormatNumber } from "@chakra-ui/react";
 import React from "react";
 import { CloseButton, Dialog, Portal } from "@chakra-ui/react";
-import { FilterBody } from "./FilterBody";
+import { FilterBody, type FilterRule } from "./FilterBody";
 
 const Demo = () => {
+	const [rules, setRules] = React.useState<FilterRule[]>([]);
 	return (
 		<Dialog.Root size={{ mdDown: "full", md: "lg" }}>
 			<Dialog.Trigger asChild>
@@ -20,7 +21,7 @@ const Demo = () => {
 							<Dialog.Title>Dialog Title</Dialog.Title>
 						</Dialog.Header>
 						<Dialog.Body>
-							<FilterBody />
+							<FilterBody rules={rules} setRules={setRules} />
 						</Dialog.Body>
 						<Dialog.Footer>
 							<Dialog.ActionTrigger asChild>

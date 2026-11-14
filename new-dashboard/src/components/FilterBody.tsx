@@ -1,66 +1,92 @@
-import { Button, HStack, For, VStack } from "@chakra-ui/react";
+"use client";
+
+import {
+	Button,
+	Code,
+	For,
+	HStack,
+	Menu,
+	NumberInput,
+	Portal,
+	VStack,
+} from "@chakra-ui/react";
 import { LuTrash } from "react-icons/lu";
 import React from "react";
-("use client");
 
-import { Code, Menu, Portal, Stack } from "@chakra-ui/react";
-import { useState } from "react";
+export type FilterOperation = "lt" | "gt" | "eq";
+export type FilterProperty = "total_time";
+
 export interface FilterRule {
-	operation: "lt" | "gt" | "eq";
-	propertry: "total_time";
+	operation: FilterOperation;
+	property: FilterProperty;
 	value: number;
 }
 
-const propertyMenu = () => {
-	const [open, setOpen] = useState(false);
-	return (
-		<Stack gap="4" align="flex-start">
-			<Code>open: {String(open)}</Code>
-			<Menu.Root open={open} onOpenChange={(e) => setOpen(e.open)}>
-				<Menu.Trigger asChild>
-					<Button variant="outline" size="sm">
-						Open
-					</Button>
-				</Menu.Trigger>
-				<Portal>
-					<Menu.Positioner>
-						<Menu.Content>
-							<Menu.Item value="total-time">Total time</Menu.Item>
-						</Menu.Content>
-					</Menu.Positioner>
-				</Portal>
-			</Menu.Root>
-		</Stack>
-	);
-};
+type Option<T extends string> = { value: T; label: string };
 
-const operationMenu = () => {
-	const [open, setOpen] = useState(false);
-	return (
-		<Stack gap="4" align="flex-start">
-			<Code>open: {String(open)}</Code>
-			<Menu.Root open={open} onOpenChange={(e) => setOpen(e.open)}>
-				<Menu.Trigger asChild>
-					<Button variant="outline" size="sm">
-						Open
-					</Button>
-				</Menu.Trigger>
-				<Portal>
-					<Menu.Positioner>
-						<Menu.Content>
-							<Menu.Item value="lt">Less than</Menu.Item>
-							<Menu.Item value="gt">Greater than</Menu.Item>
-							<Menu.Item value="eq">Equals</Menu.Item>
-						</Menu.Content>
-					</Menu.Positioner>
-				</Portal>
-			</Menu.Root>
-		</Stack>
-	);
-};
+const PROPERTY_OPTIONS: Option<FilterProperty>[] = [
+	{ value: "total_time", label: "Total time" },
+];
 
-export function FilterBody() {
-	const [rules, setRules] = React.useState<FilterRule[]>([]);
+const OPERATION_OPTIONS: Option<FilterOperation>[] = [
+	{ value: "lt", label: "<" },
+	{ value: "gt", label: ">" },
+	{ value: "eq", label: "=" },
+];
+
+interface RuleDropdownProps<T extends string> {
+	value: T;
+	options: Option<T>[];
+	onSelect: (value: T) => void;
+}
+
+function RuleDropdown<T extends string>({
+	value,
+	options,
+	onSelect,
+}: RuleDropdownProps<T>) {
+	const label = options.find((o) => o.value === value)?.label ?? value;
+
+	return (
+		<Menu.Root>
+			<Menu.Trigger asChild>
+				<Button variant="outline" size="sm" minW="120px">
+					{label}
+				</Button>
+			</Menu.Trigger>
+			<Portal>
+				<Menu.Positioner>
+					<Menu.Content>
+						<Menu.RadioItemGroup
+							value={value}
+							onValueChange={(e) => onSelect(e.value as T)}
+						>
+							{options.map((option) => (
+								<Menu.RadioItem key={option.value} value={option.value}>
+									{option.label}
+									<Menu.ItemIndicator />
+								</Menu.RadioItem>
+							))}
+						</Menu.RadioItemGroup>
+					</Menu.Content>
+				</Menu.Positioner>
+			</Portal>
+		</Menu.Root>
+	);
+}
+
+export function FilterBody({
+	rules,
+	setRules,
+}: {
+	rules: FilterRule[];
+	setRules: React.Dispatch<React.SetStateAction<FilterRule[]>>;
+}) {
+	const updateRule = (index: number, patch: Partial<FilterRule>) => {
+		setRules((old) =>
+			old.map((rule, i) => (i === index ? { ...rule, ...patch } : rule)),
+		);
+	};
 
 	return (
 		<>
@@ -69,30 +95,45 @@ export function FilterBody() {
 					onClick={() => {
 						setRules((old) => [
 							...old,
-							{
-								operation: "lt",
-								propertry: "total_time",
-								value: 0,
-							},
+							{ operation: "lt", property: "total_time", value: 0 },
 						]);
 					}}
 				>
 					Add Rule
 				</Button>
 				<Button
-					onClick={() => {
-						setRules([]);
-					}}
-					variant={"outline"}
-					colorPalette={"red"}
+					onClick={() => setRules([])}
+					variant="outline"
+					colorPalette="red"
 				>
 					<LuTrash /> Reset Rules
 				</Button>
 			</HStack>
 
-			<VStack>
+			<VStack mt="4" align="stretch" gap="4">
 				<For each={rules}>
-					{(rule, index) => <div key={index}>{rule.propertry}</div>}
+					{(rule, index) => (
+						<HStack key={index} gap="3">
+							<RuleDropdown
+								value={rule.property}
+								options={PROPERTY_OPTIONS}
+								onSelect={(property) => updateRule(index, { property })}
+							/>
+							<RuleDropdown
+								value={rule.operation}
+								options={OPERATION_OPTIONS}
+								onSelect={(operation) => updateRule(index, { operation })}
+							/>
+							<NumberInput.Root
+								value={String(rule.value)}
+								onValueChange={(e) =>
+									updateRule(index, { value: e.valueAsNumber })
+								}
+							>
+								<NumberInput.Input w="100px" />
+							</NumberInput.Root>
+						</HStack>
+					)}
 				</For>
 			</VStack>
 		</>
