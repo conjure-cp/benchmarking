@@ -26,9 +26,8 @@ const Demo = () => {
 						</Dialog.Body>
 						<Dialog.Footer>
 							<Dialog.ActionTrigger asChild>
-								<Button variant="outline">Cancel</Button>
+								<Button variant="outline">Close</Button>
 							</Dialog.ActionTrigger>
-							<Button>Save</Button>
 						</Dialog.Footer>
 						<Dialog.CloseTrigger asChild>
 							<CloseButton size="sm" />
@@ -75,25 +74,51 @@ function PageControls({
 	);
 }
 
+function matchesRule(item: SolveResult, rule: FilterRule): boolean {
+	const actual = item[rule.property];
+	const expected = rule.value;
+
+	if (expected == null) return true;
+
+	switch (rule.operation) {
+		case "lt":
+			return Number(actual) < Number(expected);
+		case "gt":
+			return Number(actual) > Number(expected);
+		case "eq":
+			return typeof actual === "number"
+				? actual === Number(expected)
+				: String(actual) === String(expected);
+		default:
+			return true;
+	}
+}
+
 export function ResultTable({ data }: { data: SolveResult[] }) {
 	const [page, setPage] = React.useState<number>(1);
-	const [totalPages, setTotalPages] = React.useState<number>(1);
-	const [rows, setRows] = React.useState<SolveResult[]>([]);
-
 	const { rules } = useRuleContext();
 
-	useEffect(() => {
-		const newTotalPages = Math.max(1, Math.ceil(data.length / PAGE_SIZE));
-		const start = (page - 1) * PAGE_SIZE;
-		const pageRows = data.slice(start, start + PAGE_SIZE);
+	const filteredData = React.useMemo(
+		() => data.filter((item) => rules.every((rule) => matchesRule(item, rule))),
+		[data, rules],
+	);
 
-		setTotalPages(newTotalPages);
-		setRows(pageRows);
-	}, [rules]);
+	useEffect(() => {
+		setPage(1);
+	}, [data, rules]);
+
+	const totalPages = Math.max(1, Math.ceil(filteredData.length / PAGE_SIZE));
+	const currentPage = Math.min(page, totalPages);
+	const start = (currentPage - 1) * PAGE_SIZE;
+	const rows = filteredData.slice(start, start + PAGE_SIZE);
 
 	return (
 		<>
-			<PageControls page={page} setPage={setPage} totalPages={totalPages} />
+			<PageControls
+				page={currentPage}
+				setPage={setPage}
+				totalPages={totalPages}
+			/>
 
 			<Table.Root size="sm" stickyHeader>
 				<Table.Header>
@@ -129,7 +154,11 @@ export function ResultTable({ data }: { data: SolveResult[] }) {
 				</Table.Body>
 			</Table.Root>
 
-			<PageControls page={page} setPage={setPage} totalPages={totalPages} />
+			<PageControls
+				page={currentPage}
+				setPage={setPage}
+				totalPages={totalPages}
+			/>
 		</>
 	);
 }

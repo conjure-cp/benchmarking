@@ -12,6 +12,7 @@ import {
 } from "@chakra-ui/react";
 import { LuTrash } from "react-icons/lu";
 import React from "react";
+import type { SolveResult } from "@/types/SolveResult";
 
 export type FilterOperation = "lt" | "gt" | "eq";
 export type FilterProperty = "total_time";
