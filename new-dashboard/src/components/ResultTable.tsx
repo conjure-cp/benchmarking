@@ -1,11 +1,12 @@
 import type { SolveResult } from "@/types/SolveResult";
 import { Button, Table, Center, Text, FormatNumber } from "@chakra-ui/react";
-import React from "react";
+import React, { useEffect } from "react";
 import { CloseButton, Dialog, Portal } from "@chakra-ui/react";
 import { FilterBody, type FilterRule } from "./FilterBody";
+import { useRuleContext } from "@/context/RuleContext";
 
 const Demo = () => {
-	const [rules, setRules] = React.useState<FilterRule[]>([]);
+	const { rules, setRules } = useRuleContext();
 	return (
 		<Dialog.Root size={{ mdDown: "full", md: "lg" }}>
 			<Dialog.Trigger asChild>
@@ -76,10 +77,19 @@ function PageControls({
 
 export function ResultTable({ data }: { data: SolveResult[] }) {
 	const [page, setPage] = React.useState<number>(1);
+	const [totalPages, setTotalPages] = React.useState<number>(1);
+	const [rows, setRows] = React.useState<SolveResult[]>([]);
 
-	const totalPages = Math.max(1, Math.ceil(data.length / PAGE_SIZE));
-	const start = (page - 1) * PAGE_SIZE;
-	const pageRows = data.slice(start, start + PAGE_SIZE);
+	const { rules } = useRuleContext();
+
+	useEffect(() => {
+		const newTotalPages = Math.max(1, Math.ceil(data.length / PAGE_SIZE));
+		const start = (page - 1) * PAGE_SIZE;
+		const pageRows = data.slice(start, start + PAGE_SIZE);
+
+		setTotalPages(newTotalPages);
+		setRows(pageRows);
+	}, [rules]);
 
 	return (
 		<>
@@ -100,7 +110,7 @@ export function ResultTable({ data }: { data: SolveResult[] }) {
 				</Table.Header>
 
 				<Table.Body>
-					{pageRows.map((item, index) => (
+					{rows.map((item, index) => (
 						<Table.Row key={index}>
 							<Table.Cell>{item.name}</Table.Cell>
 							<Table.Cell>{item.total_time}</Table.Cell>
