@@ -12,13 +12,14 @@ import pathlib
 import random
 import subprocess
 import tempfile
+import re
 
 import pandas as pd
 
 import essence_collector
 
 
-def build_command(config_path, limits, output_dir, tmp_dir) -> list[str]:
+def build_command(config_path, limits, tmp_dir) -> list[str]:
     try:
         with config_path.open() as fp:
             config_json = json.load(fp)
@@ -55,12 +56,12 @@ def build_command(config_path, limits, output_dir, tmp_dir) -> list[str]:
     return commands
 
 
-def solve_problems(essence_dir, limits, output_dir, tmp_dir):
+def solve_problems(essence_dir, limits, output_dir):
     # Find all the problems
     config_paths = essence_dir.rglob("config.json")
     commands = []
     for config in config_paths:
-        commands.extend(build_command(config, limits, output_dir, tmp_dir))
+        commands.extend(build_command(config, limits, output_dir))
 
     with tempfile.NamedTemporaryFile(mode="w", delete=False) as fp:
         print(fp.name)
@@ -86,45 +87,107 @@ def solve_problems(essence_dir, limits, output_dir, tmp_dir):
         subprocess.run(cmd)
 
 
-def process_outputs(outputs_dir, output_file):
+def _parse_runsolver_values(values_path):
+    values = {}
+    if not values_path or not values_path.is_file():
+        return values
+
+    for line in values_path.read_text(errors="replace").splitlines():
+        line = line.strip()
+        if line and not line.startswith("#") and "=" in line:
+            key, value = line.split("=", 1)
+            values[key.strip()] = value.strip()
+    return values
+
+
+def _parse_stats(stats_path):
+    if not stats_path or not stats_path.is_file():
+        return None
+    try:
+        with stats_path.open() as f:
+            stats = json.load(f)
+    except (json.JSONDecodeError, OSError):
+        return None
+    return stats if isinstance(stats, dict) else None
+
+
+def _problem_name(run_dir, stats):
+    if stats:
+        essence = stats.get("essence")
+        if essence:
+            return pathlib.Path(essence).name.removesuffix(".essence")
+
+    match = re.fullmatch(r"(.+)\.\d+\.\d+", run_dir.name)
+    return match.group(1) if match else run_dir.name
+
+
+def _param_name(instance_dir, stats):
+    if stats:
+        params = stats.get("essenceParams")
+        if params:
+            return pathlib.Path(params[0]).name
+
+    if instance_dir.name.endswith(".param"):
+        return instance_dir.name
+    return ""
+
+
+def _boolean_value(values, key):
+    return str(values.get(key, "false")).strip().lower() == "true"
+
+
+def process_outputs(runs_dir, output_file):
     time_data = []
-    for file in outputs_dir.iterdir():
-        if not file.is_file() or file.suffix != ".json":
+    instance_dirs = []
+
+    for values_path in runs_dir.rglob("values.log"):
+        instance_dirs.append(values_path.parent)
+
+    for instance_dir in instance_dirs:
+        relative = instance_dir.relative_to(runs_dir)
+        if not relative.parts:
             continue
-        with file.open() as f:
-            output = json.load(f)
 
-        for config in output:
-            for result in config["results"]:
-                if result["times"]:
-                    d = {
-                        "name": result["problem"]["meta"]["name"],
-                        "oxide": config["config"]["oxide"],
-                        "total_time": result["total_time"],
-                    }
-                    for time in result["times"]:
-                        d[time["name"]] = time["time"]
+        run_dir = runs_dir / relative.parts[0]
+        conjure_output = instance_dir / "conjure-output"
+        stats_paths = list(conjure_output.glob("*.stats.json"))
+        stats = _parse_stats(stats_paths[0]) if stats_paths else None
 
-                    d["args"] = " ".join(result["args"])
+        values = _parse_runsolver_values(instance_dir / "values.log")
+        timeout = _boolean_value(values, "TIMEOUT")
+        memout = _boolean_value(values, "MEMOUT")
 
-                    time_data.append(d)
-                else:
-                    param_runs = result["param_runs"]
-                    for run in param_runs:
-                        d = {
-                            "name": result["problem"]["meta"]["name"],
-                            "params": run["name"],
-                            "total_time": run["total_time"],
-                        }
-                        for time in run["times"]:
-                            if time["name"].startswith("Replaced"):
-                                continue
+        row = {
+            "name": _problem_name(run_dir, stats),
+            "params": _param_name(instance_dir, stats),
+        }
 
-                            d[time["name"]] = time["time"]
+        if stats:
+            status = stats.get("status", "")
+            row["status"] = status
+            if status == "TimeOut":
+                timeout = True
+            total_time = stats.get("totalTime")
+            savilerow_info = stats.get("savilerowInfo", {})
+            if not isinstance(savilerow_info, dict):
+                savilerow_info = {}
 
-                        d["args"] = " ".join(result["args"])
+            if total_time is None:
+                total_time = savilerow_info.get("SavileRowTotalTime")
+            if total_time is not None:
+                row["total_time"] = total_time
 
-                        time_data.append(d)
+            for key, value in savilerow_info.items():
+                row[key] = value
+        else:
+            row["status"] = "MEMOUT" if memout else "TimeOut" if timeout else "ERROR"
+
+        row["timeout"] = timeout
+        row["memout"] = memout
+        for key in ("WCTIME", "CPUTIME", "MAXVM", "MAXMM", "MAXRSS", "EXITSTATUS"):
+            if key in values:
+                row[key.lower()] = values[key]
+        time_data.append(row)
 
     df = pd.DataFrame(time_data)
     df.to_csv(output_file, index=False)
@@ -157,20 +220,17 @@ def build_parser():
         "DEST_DIR", type=pathlib.Path, help="Directory containing collected files"
     )
     solve_parser.add_argument(
-        "OUTPUT_DIR", type=pathlib.Path, help="Directory for solver JSON outputs"
+        "OUTPUT_DIR", type=pathlib.Path, help="Directory for solver outputs"
     )
     solve_parser.add_argument(
         "limits", type=pathlib.Path, help="JSON resource limits for runsolver"
     )
-    solve_parser.add_argument(
-        "tmp_dir", type=pathlib.Path, help="Directory for temporary solver logs"
-    )
 
     process_parser = subparsers.add_parser(
-        "process", help="Convert solver output JSON files into CSV"
+        "process", help="Convert runner temporary solver outputs into CSV"
     )
     process_parser.add_argument(
-        "OUTPUT_DIR", type=pathlib.Path, help="Directory containing solver JSON outputs"
+        "OUTPUT_DIR", type=pathlib.Path, help="Directory containing solver outputs"
     )
     process_parser.add_argument(
         "OUTPUT_FILE", type=pathlib.Path, help="CSV file to write"
