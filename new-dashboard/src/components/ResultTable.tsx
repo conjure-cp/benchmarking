@@ -39,7 +39,7 @@ const Demo = () => {
 	);
 };
 
-const PAGE_SIZE = 25;
+const PAGE_SIZE = 10;
 
 function PageControls({
 	page,
