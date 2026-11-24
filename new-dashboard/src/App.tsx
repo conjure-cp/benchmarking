@@ -19,24 +19,42 @@ export default function MyApp() {
 	});
 
 	return (
-		<div>
-			<Center bg="blue.950" h="100px" color="white">
-				<Demo></Demo>
-			</Center>
+		<>
+			<div>
+				<Center bg="blue.950" h="100px" color="white">
+					<Demo></Demo>
+				</Center>
 
-			<Box>
-				<Show when={isLoading}>
-					<Center>
-						<Spinner />
-					</Center>
-				</Show>
+				<Box
+					border="1px solid"
+					borderColor={"border"}
+					margin={"3"}
+					borderRadius={"lg"}
+					bg={"bg.panel"}
+				>
+					<Show when={isLoading}>
+						<Center>
+							<Spinner />
+						</Center>
+					</Show>
 
-				<Show when={!isLoading && data}>
-					<RuleContext.Provider value={{ rules: rules, setRules: setRules }}>
-						<ResultTable data={data as SolveResult[]} />
-					</RuleContext.Provider>
-				</Show>
-			</Box>
-		</div>
+					<Show when={!isLoading && data}>
+						<RuleContext.Provider value={{ rules: rules, setRules: setRules }}>
+							<ResultTable data={data as SolveResult[]} />
+						</RuleContext.Provider>
+					</Show>
+				</Box>
+			</div>
+			<div>
+				{" "}
+				<Box
+					border="1px solid"
+					borderColor={"border"}
+					margin={"3"}
+					borderRadius={"lg"}
+					bg={"bg.panel"}
+				></Box>
+			</div>
+		</>
 	);
 }
