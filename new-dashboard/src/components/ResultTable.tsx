@@ -1,164 +1,92 @@
-import type { SolveResult } from "@/types/SolveResult";
-import { Button, Table, Center, Text, FormatNumber } from "@chakra-ui/react";
-import React, { useEffect } from "react";
-import { CloseButton, Dialog, Portal } from "@chakra-ui/react";
-import { FilterBody, type FilterRule } from "./FilterBody";
-import { useRuleContext } from "@/context/RuleContext";
+import type { SolveResult } from "../types/SolveResult";
+import { COLUMNS, formatTime, type ColumnKey, type SortState, type Unit, TIME_FIELDS, isMeasured } from "../lib/benchmark";
 
-const Demo = () => {
-	const { rules, setRules } = useRuleContext();
-	return (
-		<Dialog.Root size={{ mdDown: "full", md: "lg" }}>
-			<Dialog.Trigger asChild>
-				<Button variant="surface" size="xs">
-					Filter
-				</Button>
-			</Dialog.Trigger>
-			<Portal>
-				<Dialog.Backdrop />
-				<Dialog.Positioner>
-					<Dialog.Content>
-						<Dialog.Header>
-							<Dialog.Title>Dialog Title</Dialog.Title>
-						</Dialog.Header>
-						<Dialog.Body>
-							<FilterBody rules={rules} setRules={setRules} />
-						</Dialog.Body>
-						<Dialog.Footer>
-							<Dialog.ActionTrigger asChild>
-								<Button variant="outline">Close</Button>
-							</Dialog.ActionTrigger>
-						</Dialog.Footer>
-						<Dialog.CloseTrigger asChild>
-							<CloseButton size="sm" />
-						</Dialog.CloseTrigger>
-					</Dialog.Content>
-				</Dialog.Positioner>
-			</Portal>
-		</Dialog.Root>
-	);
-};
-
-const PAGE_SIZE = 10;
-
-function PageControls({
-	page,
-	setPage,
-	totalPages,
-}: {
-	page: number;
-	setPage: React.Dispatch<React.SetStateAction<number>>;
-	totalPages: number;
-}) {
-	return (
-		<Center gap={"2"} paddingTop={2} paddingBottom={2}>
-			<Button
-				variant={"surface"}
-				size={"xs"}
-				onClick={() => setPage((p) => Math.max(1, p - 1))}
-			>
-				Previous Page
-			</Button>
-			<Text fontSize={"xs"}>
-				<FormatNumber value={page} /> / <FormatNumber value={totalPages} />
-			</Text>
-			<Button
-				variant={"surface"}
-				size={"xs"}
-				onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-			>
-				Next Page
-			</Button>
-			<Demo></Demo>
-		</Center>
-	);
+interface Props {
+  rows: SolveResult[];
+  columns: ColumnKey[];
+  unit: Unit;
+  sort: SortState;
+  onSort: (key: ColumnKey) => void;
+  selected: Set<SolveResult>;
+  onSelected: (selection: Set<SolveResult>) => void;
+  deltaByRow?: Map<SolveResult, number | null>;
 }
 
-function matchesRule(item: SolveResult, rule: FilterRule): boolean {
-	const actual = item[rule.property];
-	const expected = rule.value;
+export function ResultTable({ rows, columns, unit, sort, onSort, selected, onSelected, deltaByRow }: Props) {
+  const allSelected = rows.length > 0 && rows.every((row) => selected.has(row));
+  const timeKeys = new Set<string>(TIME_FIELDS.map(({ key }) => key));
+  const togglePage = () => {
+    const next = new Set(selected);
+    rows.forEach((row) => allSelected ? next.delete(row) : next.add(row));
+    onSelected(next);
+  };
+  const toggleRow = (row: SolveResult) => {
+    const next = new Set(selected);
+    if (next.has(row)) next.delete(row);
+    else next.add(row);
+    onSelected(next);
+  };
 
-	if (expected == null) return true;
-
-	switch (rule.operation) {
-		case "lt":
-			return Number(actual) < Number(expected);
-		case "gt":
-			return Number(actual) > Number(expected);
-		case "eq":
-			return typeof actual === "number"
-				? actual === Number(expected)
-				: String(actual) === String(expected);
-		default:
-			return true;
-	}
-}
-
-export function ResultTable({ data }: { data: SolveResult[] }) {
-	const [page, setPage] = React.useState<number>(1);
-	const { rules } = useRuleContext();
-
-	const filteredData = React.useMemo(
-		() => data.filter((item) => rules.every((rule) => matchesRule(item, rule))),
-		[data, rules],
-	);
-
-	useEffect(() => {
-		setPage(1);
-	}, [data, rules]);
-
-	const totalPages = Math.max(1, Math.ceil(filteredData.length / PAGE_SIZE));
-	const currentPage = Math.min(page, totalPages);
-	const start = (currentPage - 1) * PAGE_SIZE;
-	const rows = filteredData.slice(start, start + PAGE_SIZE);
-
-	return (
-		<>
-			<PageControls
-				page={currentPage}
-				setPage={setPage}
-				totalPages={totalPages}
-			/>
-
-			<Table.Root size="sm" stickyHeader>
-				<Table.Header>
-					<Table.Row bg="bg.subtle">
-						<Table.ColumnHeader>name</Table.ColumnHeader>
-						<Table.ColumnHeader>total_time</Table.ColumnHeader>
-						<Table.ColumnHeader>resolved_rule_sets</Table.ColumnHeader>
-						<Table.ColumnHeader>parsing_input_model</Table.ColumnHeader>
-						<Table.ColumnHeader>heuristic</Table.ColumnHeader>
-						<Table.ColumnHeader>rewriting_model</Table.ColumnHeader>
-						<Table.ColumnHeader>building_solver_model</Table.ColumnHeader>
-						<Table.ColumnHeader>running_solver</Table.ColumnHeader>
-					</Table.Row>
-				</Table.Header>
-
-				<Table.Body>
-					{rows.map((item, index) => (
-						<Table.Row key={index}>
-							<Table.Cell>{item.name}</Table.Cell>
-							<Table.Cell>{item.total_time}</Table.Cell>
-							<Table.Cell>{item.resolved_rule_sets}</Table.Cell>
-							<Table.Cell textAlign="end">
-								{item.parsing_input_model}
-							</Table.Cell>
-							<Table.Cell textAlign="end">{item.heuristic}</Table.Cell>
-							<Table.Cell textAlign="end">{item.rewriting_model}</Table.Cell>
-							<Table.Cell textAlign="end">
-								{item.building_solver_model}
-							</Table.Cell>
-							<Table.Cell textAlign="end">{item.running_solver}</Table.Cell>
-						</Table.Row>
-					))}
-				</Table.Body>
-			</Table.Root>
-
-			<PageControls
-				page={currentPage}
-				setPage={setPage}
-				totalPages={totalPages}
-			/>
-		</>
-	);
+  return (
+    <div className="table-overflow" role="region" aria-label="Benchmark results table" tabIndex={0}>
+      <table className="results-table">
+        <thead>
+          <tr>
+            <th className="select-column"><input type="checkbox" aria-label="Select all rows on this page" checked={allSelected} onChange={togglePage} /></th>
+            {columns.map((key) => {
+              const col = COLUMNS.find((column) => column.key === key)!;
+              return (
+                <th key={key} aria-sort={sort.key === key ? (sort.order === "asc" ? "ascending" : "descending") : "none"}>
+                  <button className={`sort-button ${sort.key === key ? "sorted" : ""}`} onClick={() => onSort(key)}>
+                    {col.label}
+                    <span aria-hidden="true">{sort.key === key ? (sort.order === "asc" ? " ↑" : " ↓") : " ↕"}</span>
+                  </button>
+                </th>
+              );
+            })}
+            {deltaByRow && <th>Vs baseline</th>}
+          </tr>
+        </thead>
+        <tbody>
+          {rows.length === 0 && <tr><td className="table-empty" colSpan={columns.length + 2 + (deltaByRow ? 1 : 0)}>No benchmarks match your filters. Try clearing the search or changing the conditions.</td></tr>}
+          {rows.map((row, index) => {
+            const delta = deltaByRow?.get(row) ?? null;
+            return (
+              <tr key={`${row.name}-${row.heuristic}-${index}`} className={selected.has(row) ? "selected-row" : ""}>
+                <td className="select-column"><input type="checkbox" aria-label={`Select ${row.name}`} checked={selected.has(row)} onChange={() => toggleRow(row)} /></td>
+                {columns.map((key) => (
+                  <td key={key} className={key === "name" ? "name-cell" : timeKeys.has(key) ? "numeric-cell" : ""} title={key === "name" ? row.name : undefined}>
+                    {key === "name" ? <>
+                      <span>{row.name}</span>
+                      {(row.source === "runner-json" || (row.sections && row.sections.length > 0) || (row.source_fields && row.source_fields.length > 0)) && <details className="run-detail">
+                        <summary>Execution details</summary>
+                        <div className="detail-content">
+                          {row.tool && <div>Tool: {row.tool}</div>}
+                          {row.args && <div>Arguments: {row.args}</div>}
+                          {row.parameters && <div>Parameter: {row.parameters}</div>}
+                          {row.found_sols !== null && row.found_sols !== undefined && <div>Solutions reported: {row.found_sols ? "yes" : "no"}</div>}
+                          {row.status && <div>Status: {row.status}</div>}
+                          {row.sections && row.sections.length > 0 && <>
+                            <strong>Timing sections</strong>
+                            {row.sections.map((section, i) => <div key={i}>{section.name}: {formatTime(section.time, unit)} {unit}</div>)}
+                          </>}
+                          {row.source_fields && row.source_fields.length > 0 && <>
+                            <strong>Additional catalogue measurements</strong>
+                            {row.source_fields.map((field, i) => <div key={i}>{field.name}: {field.value}</div>)}
+                          </>}
+                        </div>
+                      </details>}
+                    </> : timeKeys.has(key) ?
+                      <span className={key === "total_time" && isMeasured(row.total_time) ? "highlight-time" : ""}>{formatTime(row[key as keyof typeof row] as number | null, unit)}</span> :
+                      (row[key] || "—")}
+                  </td>
+                ))}
+                {deltaByRow && <td className="numeric-cell">{delta === null ? <span className="muted">—</span> : <span className={`delta ${delta > 5 ? "regression" : delta < -5 ? "improvement" : "neutral"}`}>{delta > 0 ? "+" : ""}{delta.toFixed(1)}%</span>}</td>}
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
+  );
 }
