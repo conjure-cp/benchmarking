@@ -117,7 +117,7 @@ export default function App() {
   return (
     <div className="app-shell">
       <header className="topbar">
-        <div className="topbar-left"><div className="brand-mark" aria-hidden="true"><span /> <span /> <span /></div><span className="brand-name">ESSENCE <strong>BENCHMARKS</strong></span><span className="top-divider" /><span className="workspace-pill">PAGE <strong>Benchmark explorer</strong></span></div>
+        <div className="topbar-left"><span className="workspace-pill">PAGE <strong>Benchmark explorer</strong></span></div>
         <span className="topbar-caption">Performance workspace</span>
       </header>
       <main className="workspace">
@@ -163,7 +163,7 @@ export default function App() {
 
           <section className="analysis-heading"><div className="section-title"><h2>Visual analysis</h2><p>Charts show the first {Math.min(chartCount, pageRows.length)} visible rows on this page.</p></div><div className="analysis-controls"><label>Rows <select value={chartCount} onChange={(e) => setChartCount(Number(e.target.value))}><option value={4}>4</option><option value={8}>8</option><option value={12}>12</option><option value={16}>16</option></select></label><label>Scale <select value={scale} onChange={(e) => setScale(e.target.value as "linear" | "log")}><option value="linear">Linear</option><option value="log">Logarithmic</option></select></label><label>Unit <select value={unit} onChange={(e) => setUnit(e.target.value as Unit)}><option value="s">Seconds</option><option value="ms">Milliseconds</option></select></label><span className="sync-indicator">● Synced with table</span></div></section>
           <BenchmarkCharts rows={chartRows} metric={metric} onMetric={setMetric} unit={unit} scale={scale} />
-          <p className="bottom-note">Import catalogue CSV or Rust runner JSON (out.json). Parameterised runner results expand into one row per parameter file. Missing timing values are shown as — rather than interpreted as zero. Baselines compare name, parameters, heuristic, executable and command arguments; use comparable hardware and execution settings.</p>
+          
         </>}
       </main>
     </div>
