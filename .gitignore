@@ -1,2 +1,44 @@
+# Project-specific local files (existing rules)
 exampleProblems/*
 notes.md
+
+# JavaScript / TypeScript: installed dependencies and build artefacts
+**/node_modules/
+**/dist/
+**/dist-ssr/
+**/build/
+**/.svelte-kit/
+**/.output/
+**/.vite/
+**/coverage/
+*.tsbuildinfo
+
+# Rust build artefacts
+**/target/
+
+# Python caches and local virtual environments
+**/__pycache__/
+*.py[cod]
+**/.pytest_cache/
+**/.mypy_cache/
+**/.ruff_cache/
+**/.venv/
+**/venv/
+**/.ipynb_checkpoints/
+
+# Temporary files, local logs and OS/editor artefacts
+*.log
+*.log.*
+*.tmp
+*.bak
+*.swp
+*~
+.DS_Store
+Thumbs.db
+
+# Private local environment overrides 
+**/.env
+**/.env.*
+!**/.env.example
+!**/.env.test
+
